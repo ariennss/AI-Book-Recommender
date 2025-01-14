@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity // Assicurati di avere questo using
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    @if (User.Identity.IsAuthenticated)
+    {
+        // Contenuto per utenti autenticati
+        <h1 class="display-4">Benvenuto, @User.Identity.Name!</h1>
+        <p>Sei loggato. Esplora le funzionalità dell'applicazione.</p>
+
+        // Esempio: Mostrare informazioni specifiche dell'utente (se disponibili)
+        @if (User.IsInRole("Admin")) // Esempio controllo ruolo
+        {
+            <p>Sei un amministratore.</p>
+        }
+
+        // Altro contenuto per utenti autenticati...
+    }
+    else
+    {
+        // Contenuto per utenti NON autenticati (landing page)
+        <h1 class="display-4">Benvenuto nel nostro sito!</h1>
+        <p>Scopri di più sui nostri servizi. <a asp-controller="Account" asp-action="Register">Registrati</a> o <a asp-controller="Account" asp-action="Login">Accedi</a> per iniziare.</p>
+        // Altro contenuto per la landing page...
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Titolo 1</h2>
+                <p>Descrizione 1.</p>
+            </div>
+            <div class="col-md-4">
+                <h2>Titolo 2</h2>
+                <p>Descrizione 2.</p>
+            </div>
+            <div class="col-md-4">
+                <h2>Titolo 3</h2>
+                <p>Descrizione 3.</p>
+            </div>
+        </div>
+    }
+</div>

@@ -1,4 +1,6 @@
+using BookRecommender.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApplication1;
 using WebApplication1.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IBookRepository, BookRepository>();
+builder.Services.AddSingleton<IReviewRepository, ReviewRepository>();
 
 var app = builder.Build();
 
@@ -39,4 +43,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+var a = new ReviewRepository();
+var x = new BookRepository(a);
+var c = new Recommendations(x,a);
+c.TopRatedBooks();
+var e = x.GetMostPopularBooks();
 app.Run();

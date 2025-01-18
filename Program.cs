@@ -48,4 +48,5 @@ var x = new BookRepository(a);
 var c = new Recommendations(x,a);
 c.TopRatedBooks();
 var e = x.GetMostPopularBooks();
+var tfids = new TFIDFContentRecommendation(x);
 app.Run();

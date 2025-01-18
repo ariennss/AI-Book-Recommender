@@ -33,6 +33,7 @@ namespace BookRecommender.Repositories
                             AuthorId = reader.GetInt32(2),
                             Description = reader.GetString(3),
                             ImgUrl = reader.GetString(4),
+                            RatingsCount = reader.GetInt32(5),
                         });
                     }
                 }
@@ -47,7 +48,7 @@ namespace BookRecommender.Repositories
 
         public List<Book> GetAllBooks()
         {
-            throw new NotImplementedException();
+            return books;
         }
 
         public Book GetBookById(int id)

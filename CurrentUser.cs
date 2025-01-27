@@ -6,6 +6,6 @@ namespace WebApplication1
     {
         public static string username;
         public static string password;
-        public static List<Review> currentUserReviews;
+        //public static List<Review> currentUserReviews;
     }
 }

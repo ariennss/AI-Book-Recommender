@@ -12,6 +12,7 @@ namespace BookRecommender.DBObjects
         public string Title { get; set; }
         public string Description { get; set; }
         public int AuthorId { get; set; }
+        public string AuthorName { get; set; }
         public string ImgUrl { get; set; }
         public List<Review> Reviews { get; set; }
         public List<string> Genres { get; set; }

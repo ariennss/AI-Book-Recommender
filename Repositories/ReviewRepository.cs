@@ -18,7 +18,7 @@ namespace BookRecommender.Repositories
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 connection.Open();
-                var command = new SQLiteCommand("SELECT * FROM Reviews", connection);
+                var command = new SQLiteCommand("SELECT * FROM Reviews where lcv = 0", connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -39,7 +39,7 @@ namespace BookRecommender.Repositories
         public void AddReview(Review review)
         {
             int bookid = review.BookId;
-            string userid = review.UserId;
+            string userid = review.UserId; //username
             int rating = review.Rating;
             using (var conn = new SQLiteConnection(ConnectionString))
             {

@@ -20,3 +20,79 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.scrollable-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem; /* Space between cards */
+    padding: 1rem 0;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 transparent;
+}
+
+    .scrollable-container::-webkit-scrollbar {
+        height: 8px; /* Scrollbar height */
+    }
+
+    .scrollable-container::-webkit-scrollbar-thumb {
+        background: #888; /* Scrollbar color */
+        border-radius: 4px;
+    }
+
+.card {
+    flex: 0 0 auto; /* Prevent shrinking and allow cards to fit content */
+    width: 200px; /* Set a fixed width for the cards */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+    .card:hover {
+        transform: scale(1.05); /* Slight zoom effect on hover */
+    }
+
+.card-img-top {
+    width: 100%; /* Image fills the card's width */
+    height: auto; /* Maintains aspect ratio */
+    object-fit: cover; /* Ensures the image looks good even if cropped */
+}
+
+.card-body {
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.stars {
+    display: flex;
+    justify-content: center; /* Center the stars horizontally */
+    padding: 5px 0;
+}
+
+    .stars input[type="radio"] {
+        display: none; /* Hide the radio buttons */
+    }
+
+    .stars label {
+        font-size: 2rem;
+        color: #ccc; /* Default color of stars */
+        cursor: pointer;
+        transition: color 0.3s ease; /* Smooth color transition */
+    }
+
+        /* Highlight stars up to the checked one */
+        /*.stars input[type="radio"]:checked ~ label,
+        .stars label:hover ~ label {
+            color: #ffcc00;
+        }*/
+
+    .stars input:checked ~ label
+    .stars input:not(:checked) ~ label
+    .stars:not(:checked) > label ~ label {
+        color: #ffcc00;
+    }
+
+    .stars input[type="radio"]:checked + label {
+        color: #ffcc00;
+    }

@@ -51,7 +51,7 @@ var c = new Recommendations(x, a);
 c.TopRatedBooks();
 var e = x.GetMostPopularBooks();
 var tfids = new TFIDFContentRecommendation(x);
-tfids.FindTop10MostSimilarToDescription("a witch love story");
+tfids.FindTop10MostSimilarToDescription("a love story in an ancient castle");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
 

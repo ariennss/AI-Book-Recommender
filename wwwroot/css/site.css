@@ -66,6 +66,7 @@ body {
 
 .stars {
     display: flex;
+    flex-direction: row-reverse;
     justify-content: center; /* Center the stars horizontally */
     padding: 5px 0;
 }
@@ -87,12 +88,18 @@ body {
             color: #ffcc00;
         }*/
 
-    .stars input:checked ~ label
+   /* .stars input:checked ~ label
     .stars input:not(:checked) ~ label
     .stars:not(:checked) > label ~ label {
         color: #ffcc00;
-    }
+    }*/
 
-    .stars input[type="radio"]:checked + label {
+    .stars > input[type="radio"]:checked ~ label {
         color: #ffcc00;
     }
+
+.stars > label:hover:before,
+.stars > label:hover ~ label:before {
+    opacity: 1 !important;
+    /* shame... shame... shame... I'll explain that later*/
+}

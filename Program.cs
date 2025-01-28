@@ -45,57 +45,19 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//var a = new ReviewRepository();
-//var x = new BookRepository(a);
-//var c = new Recommendations(x,a);
-//c.TopRatedBooks();
-//var e = x.GetMostPopularBooks();
-//var tfids = new TFIDFContentRecommendation(x);
-//tfids.FindTop10MostSimilarToDescription("a flying sheep");
+var a = new ReviewRepository();
+var x = new BookRepository(a);
+var c = new Recommendations(x, a);
+c.TopRatedBooks();
+var e = x.GetMostPopularBooks();
+var tfids = new TFIDFContentRecommendation(x);
+tfids.FindTop10MostSimilarToDescription("a witch love story");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
 
 
 
-//app.Run();
+app.Run();
 
-string connectionString = "Data Source=C:\\tesi\\bookRecommender.db;Version=3;";
-string outputCsvFile = "books.csv";  // Output CSV file
 
-// SQL query to select book_id and description
-string query = "SELECT book_id, description FROM Books WHERE lcv = 0"; // You can add any condition you need
-
-// Create a new StreamWriter to write to the CSV file
-using (var writer = new StreamWriter(outputCsvFile))
-{
-    // Write the header to the CSV file
-    writer.WriteLine("book_id,description");
-
-    using (var connection = new SQLiteConnection(connectionString))
-    {
-        // Open the connection
-        connection.Open();
-
-        // Create the command
-        using (var command = new SQLiteCommand(query, connection))
-        {
-            // Execute the command and get the data
-            using (var reader = command.ExecuteReader())
-            {
-                // Read each row from the result set
-                while (reader.Read())
-                {
-                    // Extract book_id and description
-                    var bookId = reader.GetInt32(0);
-                    var description = reader.GetString(1);
-
-                    // Write the book_id and description to the CSV file
-                    writer.WriteLine($"{bookId},{description}");
-                }
-            }
-        }
-    }
-}
-
-Console.WriteLine("CSV file has been generated: " + outputCsvFile);
     

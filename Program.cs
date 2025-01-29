@@ -50,7 +50,7 @@ var x = new BookRepository(a);
 var c = new Recommendations(x, a);
 c.TopRatedBooks();
 var e = x.GetMostPopularBooks();
-var tfids = new TFIDFContentRecommendation(x);
+var tfids = new HybridContentRecommendation(x);
 tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");

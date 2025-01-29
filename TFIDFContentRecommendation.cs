@@ -7,33 +7,118 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 
 namespace WebApplication1
 {
-    public class TFIDFContentRecommendation
+    public class HybridContentRecommendation
     {
         private readonly IBookRepository _bookRepository;
         private static Dictionary<int, List<string>> descriptionVectors = new Dictionary<int, List<string>>();
-        private static List<string> stopwords = new List<string>();
         private readonly HttpClient _httpClient;
+        private readonly string _dbPath = "Data Source=C:\\test\\bookRecommender.db";
 
-        public TFIDFContentRecommendation(IBookRepository bookrepo)
+        public HybridContentRecommendation(IBookRepository bookrepo)
         {
-            // Initialize the HTTP client for the Python API
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("http://localhost:5000/");
-
             _bookRepository = bookrepo;
-
-            // Preload and lemmatize all descriptions in one batch
-            
         }
 
+        /// <summary>
+        /// Finds the top 10 books using both TF-IDF and Word2Vec similarity.
+        /// </summary>
+        public async Task FindTop10MostSimilarToDescriptionAsync(string description)
+        {
+            // 1️⃣ Preprocess and lemmatize all book descriptions for TF-IDF
+            await PreprocessAndLemmatizeDescriptionsAsync();
+
+            // 2️⃣ Preprocess and lemmatize the input phrase
+            var lemmatizedInput = await LemmatizeText(description);
+
+            // 3️⃣ Call Python API to get the Word2Vec embedding of the input phrase
+            var inputEmbedding = await GetWord2VecEmbedding(description);
+            if (inputEmbedding == null)
+            {
+                Console.WriteLine("Error: Could not generate Word2Vec embedding.");
+                return;
+            }
+
+            // 4️⃣ Compute TF-IDF Similarity
+            var idf = ComputeIDF();
+            var inputTfidf = CalculateTFIDF(lemmatizedInput, idf);
+            var tfidfSimilarities = new Dictionary<int, double>();
+
+            foreach (var (bookId, words) in descriptionVectors)
+            {
+                var bookTfidf = CalculateTFIDF(words, idf);
+                var similarity = CosineSimilarity(inputTfidf, bookTfidf);
+                tfidfSimilarities[bookId] = similarity;
+            }
+
+            // 5️⃣ Compute Word2Vec Similarity (Using DB)
+            var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
+
+            // 6️⃣ Combine TF-IDF & Word2Vec Similarity
+            var combinedScores = new Dictionary<int, double>();
+            foreach (var bookId in tfidfSimilarities.Keys)
+            {
+                double tfidfScore = tfidfSimilarities.GetValueOrDefault(bookId, 0);
+                double w2vScore = word2vecSimilarities.GetValueOrDefault(bookId, 0);
+
+                // Weighting: 50% TF-IDF + 50% Word2Vec
+                double finalScore = (tfidfScore * 0.5) + (w2vScore * 0.5);
+                combinedScores[bookId] = finalScore;
+            }
+
+            // 7️⃣ Retrieve & Sort Books by Combined Score
+            var topBooks = combinedScores
+                .OrderByDescending(pair => pair.Value)
+                .Take(100) // First sort by similarity
+                .Select(pair => _bookRepository.GetBookById(pair.Key))
+                .OrderByDescending(x => x.RatingsCount) // Then sort by popularity
+                .Take(10)
+                .ToList();
+
+            // Print Results
+            Console.WriteLine("Top 10 most similar books:");
+            foreach (var book in topBooks)
+            {
+                Console.WriteLine($"- {book.Title}");
+            }
+        }
+
+        /// <summary>
+        /// Calls the Python API to get the Word2Vec embedding of the input phrase.
+        /// </summary>
+        private async Task<List<float>> GetWord2VecEmbedding(string text)
+        {
+            try
+            {
+                var payload = new StringContent($"{{\"text\":\"{text}\"}}", Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("word2vec_embed", payload);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<List<float>>(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during embedding: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Preprocesses and lemmatizes all book descriptions for TF-IDF.
+        /// </summary>
         private async Task PreprocessAndLemmatizeDescriptionsAsync()
         {
             var allBooks = _bookRepository.GetAllBooks();
 
-            // Prepare the payload for the API
             var descriptionsPayload = new
             {
                 descriptions = allBooks.Select(book => new
@@ -43,22 +128,17 @@ namespace WebApplication1
                 }).ToList()
             };
 
-            // Serialize the payload to JSON
             var jsonPayload = JsonSerializer.Serialize(descriptionsPayload);
 
             try
             {
-                // Send a POST request to the Python API
-                var response = _httpClient.PostAsync("batch_lemmatize",
-                    new StringContent(jsonPayload, Encoding.UTF8, "application/json")).Result;
+                var response = await _httpClient.PostAsync("batch_lemmatize",
+                    new StringContent(jsonPayload, Encoding.UTF8, "application/json"));
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Deserialize the response into a dictionary
                     var responseContent = await response.Content.ReadAsStringAsync();
                     descriptionVectors = JsonSerializer.Deserialize<Dictionary<int, List<string>>>(responseContent);
-
-                    Console.WriteLine("Descriptions successfully lemmatized and cached.");
                 }
                 else
                 {
@@ -68,39 +148,6 @@ namespace WebApplication1
             catch (Exception ex)
             {
                 Console.WriteLine($"Error during preprocessing: {ex.Message}");
-            }
-        }
-
-        public async Task FindTop10MostSimilarToDescriptionAsync(string description)
-        {
-            await PreprocessAndLemmatizeDescriptionsAsync();
-            // Process the input description (lemmatize it via the Python API)
-            var lemmatizedInput = await LemmatizeText(description);
-
-            var idf = ComputeIDF();
-            var inputTfidf = CalculateTFIDF(lemmatizedInput, idf);
-
-            var similarities = new List<(int BookId, double Similarity)>();
-
-            foreach (var (bookId, words) in descriptionVectors)
-            {
-                var bookTfidf = CalculateTFIDF(words, idf);
-                var similarity = CosineSimilarity(inputTfidf, bookTfidf);
-                similarities.Add((bookId, similarity));
-            }
-
-            var top10Books = similarities
-                .OrderByDescending(pair => pair.Similarity)
-                .Take(100)
-                .Select(pair => _bookRepository.GetBookById(pair.BookId))
-                .OrderByDescending(x => x.RatingsCount)
-                .Take(10)
-                .ToList();
-
-            Console.WriteLine("Top 10 most similar books:");
-            foreach (var book in top10Books)
-            {
-                Console.WriteLine($"- {book.Title}");
             }
         }
 
@@ -114,8 +161,7 @@ namespace WebApplication1
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-                    var lemmatizedWords = JsonSerializer.Deserialize<List<string>>(result);
-                    return lemmatizedWords ?? new List<string>();
+                    return JsonSerializer.Deserialize<List<string>>(result) ?? new List<string>();
                 }
             }
             catch (Exception ex)
@@ -126,14 +172,31 @@ namespace WebApplication1
             return new List<string>();
         }
 
-        private Dictionary<string, double> CalculateTFIDF(List<string> words, Dictionary<string, double> idf)
+        private async Task<Dictionary<int, double>> ComputeWord2VecSimilarities(List<float> inputVector)
         {
-            var termFrequency = words
-                .GroupBy(word => word)
-                .ToDictionary(g => g.Key, g => g.Count() / (double)words.Count);
-            var tfidf = termFrequency
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value * idf.GetValueOrDefault(kvp.Key, 0));
-            return tfidf;
+            var word2vecSimilarities = new Dictionary<int, double>();
+
+            using (var conn = new SqliteConnection(_dbPath))
+            {
+                await conn.OpenAsync();
+                var command = conn.CreateCommand();
+                command.CommandText = "SELECT book_id, embedding FROM BookEmbeddings";
+
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        int bookId = reader.GetInt32(0);
+                        string embeddingStr = reader.GetString(1);
+                        var embeddingList = embeddingStr.Trim('[', ']').Split(',').Select(float.Parse).ToList();
+
+                        double similarity = CosineSimilarity(inputVector, embeddingList);
+                        word2vecSimilarities[bookId] = similarity;
+                    }
+                }
+            }
+
+            return word2vecSimilarities;
         }
 
         private Dictionary<string, double> ComputeIDF()
@@ -156,13 +219,22 @@ namespace WebApplication1
                 .ToDictionary(kvp => kvp.Key, kvp => Math.Log(totalDocuments / (1 + kvp.Value)));
         }
 
-        private double CosineSimilarity(Dictionary<string, double> vec1, Dictionary<string, double> vec2)
+        private Dictionary<string, double> CalculateTFIDF(List<string> words, Dictionary<string, double> idf)
         {
-            var intersect = vec1.Keys.Intersect(vec2.Keys);
-            var dotProduct = intersect.Sum(key => vec1[key] * vec2[key]);
+            var termFrequency = words
+                .GroupBy(word => word)
+                .ToDictionary(g => g.Key, g => g.Count() / (double)words.Count);
+            return termFrequency
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value * idf.GetValueOrDefault(kvp.Key, 0));
+        }
 
-            var magnitude1 = Math.Sqrt(vec1.Values.Sum(val => val * val));
-            var magnitude2 = Math.Sqrt(vec2.Values.Sum(val => val * val));
+        private double CosineSimilarity(List<float> vec1, List<float> vec2)
+        {
+            if (vec1.Count != vec2.Count) return 0;
+
+            double dotProduct = vec1.Zip(vec2, (a, b) => a * b).Sum();
+            double magnitude1 = Math.Sqrt(vec1.Sum(v => v * v));
+            double magnitude2 = Math.Sqrt(vec2.Sum(v => v * v));
 
             return magnitude1 == 0 || magnitude2 == 0 ? 0 : dotProduct / (magnitude1 * magnitude2);
         }

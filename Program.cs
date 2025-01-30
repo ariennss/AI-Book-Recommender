@@ -1,3 +1,10 @@
+//TODO: remove from hybrid suggestions the books that i have already rated!
+//TODO: implementare il sistema di recensioni
+//TODO: rendere non inviabile il form di rating per quei libri che ho già recensito
+//TODO: fare le schermate 
+//TODO: ricordarsi la pagina deel profilo in cui l'utente può vedere i film che ha già recensito
+
+
 using BookRecommender.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Data.SQLite;

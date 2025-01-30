@@ -11,6 +11,7 @@ using System.Data.SQLite;
 
 namespace WebApplication1
 {
+   
     public class HybridContentRecommendation
     {
         private readonly IBookRepository _bookRepository;

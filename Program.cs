@@ -3,6 +3,7 @@
 //TODO: rendere non inviabile il form di rating per quei libri che ho già recensito
 //TODO: fare le schermate 
 //TODO: ricordarsi la pagina deel profilo in cui l'utente può vedere i film che ha già recensito
+//TODO: creare la view relativa all'utente che ancora non ha reviews.
 
 
 using BookRecommender.Repositories;

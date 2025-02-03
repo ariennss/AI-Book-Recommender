@@ -4,6 +4,8 @@
 //TODO: fare le schermate 
 //TODO: ricordarsi la pagina deel profilo in cui l'utente può vedere i film che ha già recensito
 //TODO: creare la view relativa all'utente che ancora non ha reviews.
+//TODO: when ranking books with tf idf and w2v i can also create a ranking for each book based on how it is liked by my
+//      users similarity e pesare la suggestion finale anche in base a quello. 
 
 
 using BookRecommender.Repositories;
@@ -59,7 +61,7 @@ var c = new Recommendations(x, a);
 c.TopRatedBooks();
 var e = x.GetMostPopularBooks();
 var tfids = new HybridContentRecommendation(x);
-tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
+var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
 

@@ -18,11 +18,13 @@ namespace WebApplication1
         private static Dictionary<int, List<string>> descriptionVectors = new();
         private readonly HttpClient _httpClient;
         private readonly string _dbPath = "Data Source=C:\\tesi\\bookRecommender.db;Version=3";
+        private readonly ICollaborativeFiltering _collaborativeFiltering;
 
-        public HybridContentRecommendation(IBookRepository bookrepo)
+        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering)
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000/") };
             _bookRepository = bookrepo;
+            _collaborativeFiltering = collaborativeFiltering;
         }
 
         /// <summary>
@@ -56,6 +58,13 @@ namespace WebApplication1
 
             // 5️⃣ Compute Word2Vec Similarity
             var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
+
+
+            var collabFilterScores = _collaborativeFiltering.GetMostSimilarUsers(CurrentUser.username);
+
+            // and then????
+
+
 
             // 6️⃣ Combine TF-IDF & Word2Vec Similarity
             var combinedScores = MergeSimilarityScores(tfidfSimilarities, word2vecSimilarities);
@@ -242,6 +251,44 @@ namespace WebApplication1
             float magnitude2 = (float)Math.Sqrt(vec2.Sum(v => v * v));
 
             return magnitude1 == 0 || magnitude2 == 0 ? 0f : dotProduct / (magnitude1 * magnitude2);
+        }
+
+
+        private Dictionary<int, float> ComputeCollaborativeFilteringScore(int userId, int topK = 10)
+        {
+            var collaborativeScores = new Dictionary<int, float>();
+
+            // 1️⃣ Find the most similar users
+            var similarUsers = _userRepository.GetSimilarUsers(userId, topK);
+
+            // 2️⃣ Retrieve books rated by similar users
+            foreach (var user in similarUsers)
+            {
+                var userRatings = _userRepository.GetUserRatings(user.UserId);
+
+                foreach (var rating in userRatings)
+                {
+                    if (!collaborativeScores.ContainsKey(rating.BookId))
+                    {
+                        collaborativeScores[rating.BookId] = 0;
+                    }
+
+                    // 3️⃣ Compute Weighted Score
+                    collaborativeScores[rating.BookId] += rating.Rating * user.SimilarityScore;
+                }
+            }
+
+            // 4️⃣ Normalize Scores
+            if (collaborativeScores.Count > 0)
+            {
+                float maxScore = collaborativeScores.Values.Max();
+                foreach (var bookId in collaborativeScores.Keys.ToList())
+                {
+                    collaborativeScores[bookId] /= maxScore; // Normalize between 0 and 1
+                }
+            }
+
+            return collaborativeScores;
         }
     }
 }

@@ -8,6 +8,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using System.Data.SQLite;
+using WebApplication1.Repositories;
+using BookRecommender.DBObjects;
 
 namespace WebApplication1
 {
@@ -19,19 +21,26 @@ namespace WebApplication1
         private readonly HttpClient _httpClient;
         private readonly string _dbPath = "Data Source=C:\\tesi\\bookRecommender.db;Version=3";
         private readonly ICollaborativeFiltering _collaborativeFiltering;
+        private readonly IReviewRepository _reviewRepository;
 
-        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering)
+        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering, IReviewRepository rewrepo)
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000/") };
             _bookRepository = bookrepo;
             _collaborativeFiltering = collaborativeFiltering;
+            _reviewRepository = rewrepo;
         }
 
         /// <summary>
         /// Finds the top 10 books using both TF-IDF and Word2Vec similarity.
         /// </summary>
-        public async Task FindTop10MostSimilarToDescriptionAsync(string description)
+        public async Task<List<Book>> FindTop10MostSimilarToDescriptionAsync(string description)
         {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                Console.WriteLine("Error: Empty input.");
+                return null;
+            }
             // 1️⃣ Preprocess and lemmatize all book descriptions for TF-IDF
             await PreprocessAndLemmatizeDescriptionsAsync();
 
@@ -40,7 +49,7 @@ namespace WebApplication1
             if (lemmatizedInput == null || !lemmatizedInput.Any())
             {
                 Console.WriteLine("Error: Unable to process input description.");
-                return;
+                return null;
             }
 
             // 3️⃣ Get Word2Vec embedding for the input phrase
@@ -48,7 +57,7 @@ namespace WebApplication1
             if (inputEmbedding == null || inputEmbedding.Count == 0)
             {
                 Console.WriteLine("Error: Could not generate Word2Vec embedding.");
-                return;
+                return null;
             }
 
             // 4️⃣ Compute TF-IDF Similarity
@@ -57,27 +66,68 @@ namespace WebApplication1
             var tfidfSimilarities = ComputeTFIDFSimilarity(inputTfidf);
 
             // 5️⃣ Compute Word2Vec Similarity
-            var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
+           var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
+
+            //var collaborativeScores = new Dictionary<int, double>();
+            //var similarUsers = _collaborativeFiltering.GetMostSimilarUsers("ariennss");
+            //foreach (var user in similarUsers)
+            //{
+            //    var userId = user.Key;
+            //    var similarityScore = user.Value;  // This is the cosine similarity score
+
+            //    var userRatings = _reviewRepository.GetUserReview(userId);  // Get this user's ratings
+
+            //    foreach (var rating in userRatings)
+            //    {
+            //        if (!collaborativeScores.ContainsKey(rating.BookId))
+            //        {
+            //            collaborativeScores[rating.BookId] = 0;
+            //        }
+
+            //        // Weighted Score: Rating * Similarity Score
+            //        collaborativeScores[rating.BookId] += rating.Rating * similarityScore;
+            //    }
+            //}
+
+            //// 4️⃣ Normalize Scores
+            //if (collaborativeScores.Count > 0 && collaborativeScores.Values.Max() > 0)
+            //{
+            //    double maxScore = collaborativeScores.Values.Max();
+            //    foreach (var bookId in collaborativeScores.Keys.ToList())
+            //    {
+            //        collaborativeScores[bookId] /= maxScore; // Normalize between 0 and 1
+            //    }
+            //}
+
+            var combinedScores = new Dictionary<int, double>();
+
+            foreach (var bookId in tfidfSimilarities.Keys)
+            {
+                double tfidfScore = tfidfSimilarities.GetValueOrDefault(bookId, 0);
+                double w2vScore = word2vecSimilarities.GetValueOrDefault(bookId, 0);
+                //double collaborativeScore = collaborativeScores.GetValueOrDefault(bookId, 0);
+
+                // Weighted Combination (Adjust Weights as Needed)
+                double finalScore = (tfidfScore * 0.9) + (w2vScore * 0.1); /*+ (collaborativeScore * 0);*/
+                combinedScores[bookId] = finalScore;
+            }
 
 
-            var collabFilterScores = _collaborativeFiltering.GetMostSimilarUsers(CurrentUser.username);
 
-            // and then????
-
-
-
-            // 6️⃣ Combine TF-IDF & Word2Vec Similarity
-            var combinedScores = MergeSimilarityScores(tfidfSimilarities, word2vecSimilarities);
+            // UNCOMMENT IF NEEDED COMBINED SCORES THAT DO NOT CONSIDER COLLABORATIVE FILTERING!
+            //var combinedScores = MergeSimilarityScores(tfidfSimilarities, word2vecSimilarities);
 
             // 7️⃣ Retrieve & Sort Books by Combined Score
             var topBooks = combinedScores
-                .OrderByDescending(pair => pair.Value)
-                .Take(100) // First sort by similarity
-                .Select(pair => _bookRepository.GetBookById(pair.Key))
-                .OrderByDescending(x => x.RatingsCount) // Then sort by popularity
-                .Take(10)
-                .ToList();
+               .OrderByDescending(pair => pair.Value)
+               .Take(20) // First sort by similarity
+               .Select(pair => _bookRepository.GetBookById(pair.Key))
+               .OrderByDescending(x => x.RatingsCount) // Then sort by popularity
+               .Take(10)
+               .ToList();
 
+
+            return topBooks;
             // Print Results
             Console.WriteLine("Top 10 most similar books:");
             foreach (var book in topBooks)
@@ -253,42 +303,5 @@ namespace WebApplication1
             return magnitude1 == 0 || magnitude2 == 0 ? 0f : dotProduct / (magnitude1 * magnitude2);
         }
 
-
-        private Dictionary<int, float> ComputeCollaborativeFilteringScore(int userId, int topK = 10)
-        {
-            var collaborativeScores = new Dictionary<int, float>();
-
-            // 1️⃣ Find the most similar users
-            var similarUsers = _userRepository.GetSimilarUsers(userId, topK);
-
-            // 2️⃣ Retrieve books rated by similar users
-            foreach (var user in similarUsers)
-            {
-                var userRatings = _userRepository.GetUserRatings(user.UserId);
-
-                foreach (var rating in userRatings)
-                {
-                    if (!collaborativeScores.ContainsKey(rating.BookId))
-                    {
-                        collaborativeScores[rating.BookId] = 0;
-                    }
-
-                    // 3️⃣ Compute Weighted Score
-                    collaborativeScores[rating.BookId] += rating.Rating * user.SimilarityScore;
-                }
-            }
-
-            // 4️⃣ Normalize Scores
-            if (collaborativeScores.Count > 0)
-            {
-                float maxScore = collaborativeScores.Values.Max();
-                foreach (var bookId in collaborativeScores.Keys.ToList())
-                {
-                    collaborativeScores[bookId] /= maxScore; // Normalize between 0 and 1
-                }
-            }
-
-            return collaborativeScores;
-        }
     }
 }

@@ -99,5 +99,10 @@ namespace BookRecommender.Repositories
         {
             return books.Where(x => ids.Contains(x.Id)).ToList();
         }
+
+        public List<Book> GetBooksForContentBased()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

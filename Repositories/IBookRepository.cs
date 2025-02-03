@@ -16,5 +16,7 @@ namespace BookRecommender.Repositories
 
         List<Book> GetMostPopularBooks();
         List<Book> TopRatedBooks();
+
+        List<Book> GetBooksForContentBased();
     }
 }

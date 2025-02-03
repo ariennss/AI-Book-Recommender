@@ -55,13 +55,20 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-var a = new ReviewRepository();
-var x = new BookRepository(a);
-var c = new Recommendations(x, a);
-c.TopRatedBooks();
-var e = x.GetMostPopularBooks();
-var tfids = new HybridContentRecommendation(x);
-var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
+//var a = new ReviewRepository();
+//var x = new BookRepository(a);
+//var c = new Recommendations(x, a);
+//c.TopRatedBooks();
+//var cf = new CollaborativeFiltering(x,a);
+//var e = x.GetMostPopularBooks();
+//var tfids = new HybridContentRecommendation(x, cf, a);
+
+
+
+//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
+//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a horror story about two sisters in an abandoned house");
+//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a dystopian society");
+//var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a vampire love story");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
 

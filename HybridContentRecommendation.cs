@@ -14,7 +14,7 @@ using BookRecommender.DBObjects;
 namespace WebApplication1
 {
    
-    public class HybridContentRecommendation
+    public class HybridContentRecommendation : IHybridContentRecommendation
     {
         private readonly IBookRepository _bookRepository;
         private static Dictionary<int, List<string>> descriptionVectors = new();

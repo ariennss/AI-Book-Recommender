@@ -1,0 +1,33 @@
+﻿@model WebApplication1.ViewModels.AISuggestionsModel
+
+<h1>AI-Powered Book Recommendations</h1>
+
+<p>Search what you want and look for your favorite book!</p>
+
+<p>You just need to complete the sentence.</p>
+
+<p><strong>I want to read a book about...</strong></p>
+
+<!-- Search Form -->
+<form method="post" action="@Url.Action("GetAISuggestions", "Home")">
+    <div class="mb-3">
+        <textarea class="form-control" name="query" rows="3" placeholder="Type your topic here...">@Model.Query</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Go</button>
+</form>
+
+<!-- Show results only if recommendations are available -->
+@if (Model.Recommendations != null && Model.Recommendations.Any())
+{
+    <h2>Top AI-Suggested Books</h2>
+    <ul class="list-group">
+        @foreach (var book in Model.Recommendations)
+        {
+            <li class="list-group-item">
+                <h5>@book.Title</h5>
+                <p>Author: @book.AuthorName</p>
+                <p>@book.Description</p>
+            </li>
+        }
+    </ul>
+}

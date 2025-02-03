@@ -1,0 +1,62 @@
+﻿@using WebApplication1.ViewModels
+@model HomeViewModel
+
+@{
+    ViewData["Title"] = "Book Recommendations";
+}
+
+<h1>Recommended Books</h1>
+
+<!-- Most Popular Books Section -->
+@if (Model.MostPopularBooks != null && Model.MostPopularBooks.Any())
+
+{
+    <h2>Most Popular Books</h2>
+    <div class="scrollable-container">
+        @foreach (var book in Model.MostPopularBooks)
+
+        {
+            <div class="card">
+                <img src="@book.ImgUrl" alt="@book.Title cover" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">@book.Title</h5>
+                    <p class="card-text">Book ID: @book.Id</p>
+
+                    <!-- Rating Form for Most Popular Books -->
+                    <form action="@Url.Action("RateBook", "Home")" method="post">
+                        <input type="hidden" name="BookId" value="@book.Id" />
+                        <div class="stars">
+                            <input type="radio" id="star5-@book.Id" name="rating" value="5" />
+                            <label for="star5-@book.Id" class="star">&#9733;</label>
+
+                            <input type="radio" id="star4-@book.Id" name="rating" value="4" />
+                            <label for="star4-@book.Id" class="star">&#9733;</label>
+
+                            <input type="radio" id="star3-@book.Id" name="rating" value="3" />
+                            <label for="star3-@book.Id" class="star">&#9733;</label>
+
+                            <input type="radio" id="star2-@book.Id" name="rating" value="2" />
+                            <label for="star2-@book.Id" class="star">&#9733;</label>
+
+                            <input type="radio" id="star1-@book.Id" name="rating" value="1" />
+                            <label for="star1-@book.Id" class="star">&#9733;</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Rate</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+else
+
+{
+    <p>No popular books are available at the moment.</p>
+}
+
+<div class="mt-4">
+    <p>mhh... it seems that you haven't rated enough books. Don't worry!</p>
+    <a href="@Url.Action("RatingPage", "Home")" class="btn btn-primary d-block mb-2">Start rating</a>
+    <a href="@Url.Action("AISuggestions", "Home")" class="btn btn-secondary d-block">Try books with AI</a>
+</div>

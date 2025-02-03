@@ -32,6 +32,7 @@ builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IBookRepository, BookRepository>();
 builder.Services.AddSingleton<IReviewRepository, ReviewRepository>();
 builder.Services.AddSingleton<ICollaborativeFiltering, CollaborativeFiltering>();
+builder.Services.AddSingleton<IHybridContentRecommendation, HybridContentRecommendation>();
 
 var app = builder.Build();
 

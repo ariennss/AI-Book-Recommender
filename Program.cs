@@ -5,7 +5,8 @@
 //TODO: ricordarsi la pagina deel profilo in cui l'utente può vedere i film che ha già recensito
 //TODO: creare la view relativa all'utente che ancora non ha reviews.
 //TODO: when ranking books with tf idf and w2v i can also create a ranking for each book based on how it is liked by my
-//      users similarity e pesare la suggestion finale anche in base a quello. 
+//TODO:   users similarity e pesare la suggestion finale anche in base a quello. 
+//TODO: nel collaborative filtering tenere conto della quantità di libri in comune a parità di punteggio per determinarel'utente piu simile
 
 
 using BookRecommender.Repositories;
@@ -70,6 +71,7 @@ app.MapControllerRoute(
 //var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a horror story about two sisters in an abandoned house");
 //var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a dystopian society");
 //var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a vampire love story");
+//var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a dog with superpowers");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
 

@@ -24,6 +24,11 @@ namespace WebApplication1.Controllers
             _contentRecommender = contentrec;
         }
 
+        public IActionResult HomePage()
+        {
+            return View("Homepage");
+        }
+
         public async Task<IActionResult> Index()
         {
             var books = _bookRepository.GetAllBooks();

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 html {
   font-size: 14px;
 }
@@ -102,4 +104,102 @@ body {
 .stars > label:hover ~ label:before {
     opacity: 1 !important;
     /* shame... shame... shame... I'll explain that later*/
+}
+
+
+
+
+.homepageNav {
+    font-family: "Roboto", serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 2rem;
+    padding-block: 1rem;
+    box-shadow: 0px 1px 5px 0px rgba(0,0,0,0.1);
+}
+
+.navLeft {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.leftLogo{
+    max-height: 5rem;
+}
+
+.leftTitle {
+    font-weight: bold;
+    text-decoration: none;
+    color: unset;
+    font-size: 2rem;
+}
+
+.navRight {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    list-style: none;
+    margin: unset;
+    max-height: fit-content;
+}
+
+li a {
+    text-decoration: none;
+    color: unset;
+}
+
+.homepageIntro {
+    padding-block-start: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5rem;
+}
+
+.introLeft {
+    display: grid;
+    column-gap: 2rem;
+    max-height: fit-content;
+    margin-left: auto;
+}
+
+.leftButton {
+    max-width: fit-content;
+}
+
+.leftTop {
+    display: grid;
+    column-gap: 1rem;
+}
+
+.topParagraph {
+    max-width: 20rem;
+}
+
+.topTitle {
+    display: grid;
+    column-gap: .5rem;
+    max-width: 5rem;
+}
+
+.topTitle h1 {
+    font-size: 2rem;
+}
+
+.introRight {
+    padding-right: 5rem;
+}
+
+.introRight img {
+    max-height: 30rem;
+    margin-left: auto;
+}
+
+.homepageFooter {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }

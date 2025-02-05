@@ -98,3 +98,9 @@ else
 {
     <p>No suggestions are available at the moment.</p>
 }
+
+<div class="mt-4">
+    <p>mhh... it seems that you haven't rated enough books. Don't worry!</p>
+    <a href="@Url.Action("RatingPage", "Home")" class="btn btn-primary d-block mb-2">Start rating</a>
+    <a href="@Url.Action("AISuggestions", "Home")" class="btn btn-secondary d-block">Try books with AI</a>
+</div>

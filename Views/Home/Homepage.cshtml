@@ -1,3 +1,23 @@
-﻿
-<h1>Questa è la homepage.</h1>
-<p>Scopri di più sui nostri servizi. <a asp-controller="Account" asp-action="Register">Registrati</a> o <a asp-controller="Account" asp-action="Login">Accedi</a> per iniziare.</p>
+﻿ @if (!User.Identity.IsAuthenticated)
+{
+    <div class="homepageIntro">
+        <div class="introLeft">
+            <div class="leftTop">
+                <div class="topTitle">
+                    <h1>My Book Recommender</h1>
+                    <p>A Subtitle</p>
+                </div>
+                <p class="topParagraph">A paragraph of text with an unassigned link A paragraph of text with an unassigned link A paragraph of text with an unassigned link </p>
+            </div>
+            <button class="leftButton">LESSSS GOOOOOOOO</button>
+        </div>
+        <div class="introRight">
+            <img src="/Images/introPlaceholder.webp" alt="Alternate Text" />
+        </div>
+    </div>
+}
+else
+{
+    <h1>Questa è la homepage.</h1>
+    <h1>Welcome @User.Identity.Name</h1>
+}

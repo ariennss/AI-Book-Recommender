@@ -51,6 +51,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        CurrentUser.Clear();
         return RedirectToAction("Homepage", "Home");
     }
 

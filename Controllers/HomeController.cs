@@ -40,19 +40,19 @@ namespace WebApplication1.Controllers
                 int userRatingsCount = _reviewRepository.GetUserReview(username).Count();
                 if (userRatingsCount >= minimumRatings)
                 {
-                    // User has rated enough books, show recommendations
+                  
                     
                     var suggestedBooks = _collaborativeFiltering.SuggestionsFor(username);
-                    //var bestReviewedBooks = _bookRepository.GetBestReviewedBooksAsync(5);
+                   
 
                     var viewModel = new HomeViewModel
                     {
                         MostPopularBooks = mostPopularBooks,
                         SuggestedBooks = suggestedBooks,
-                        //BestReviewedBooks = bestReviewedBooks
+                       
                     };
 
-                    return View("Recommendations", viewModel); // Return a view called Recommendations
+                    return View("Recommendations", viewModel);
                 }
                 else
                 {

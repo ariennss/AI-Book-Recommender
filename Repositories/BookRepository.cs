@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WebApplication1;
 using static System.Reflection.Metadata.BlobBuilder;
 
 namespace BookRecommender.Repositories
@@ -66,7 +67,11 @@ namespace BookRecommender.Repositories
         public List<Book> GetMostPopularBooks()
        {
             var reviews = _reviewRepository.GetAllReviews();
+            var currentUserReviews = reviews.Where(x => x.UserId == CurrentUser.username).ToList();
+            var currentUserBookIds = currentUserReviews.Select(r => r.BookId).ToHashSet();
+            
             var bookPopularity = reviews
+                 .Where(r => !currentUserBookIds.Contains(r.BookId))
                  .GroupBy(r => r.BookId)
                  .Select(group => new
                  {

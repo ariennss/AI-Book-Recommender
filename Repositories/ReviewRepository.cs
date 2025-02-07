@@ -36,21 +36,32 @@ namespace BookRecommender.Repositories
 
         }
 
-        public void AddReview(Review review)
+        public async Task AddReviewAsync(Review review)
         {
             int bookid = review.BookId;
-            string userid = review.UserId; //username
+            string userid = review.UserId; // Username
             int rating = review.Rating;
+
             using (var conn = new SQLiteConnection(ConnectionString))
             {
-                conn.Open();
-                string query = $"insert into Reviews(book_id, user_id, rating) VALUES({bookid}, '{userid}', {rating})";
-                var command = new SQLiteCommand(query, conn);
-                command.ExecuteNonQuery();
+                await conn.OpenAsync(); // Use async version
+
+                string query = $"INSERT INTO Reviews(book_id, user_id, rating) VALUES(@bookid, @userid, @rating)";
+
+                using (var command = new SQLiteCommand(query, conn))
+                {
+                    // Use parameters to prevent SQL injection
+                    command.Parameters.AddWithValue("@bookid", bookid);
+                    command.Parameters.AddWithValue("@userid", userid);
+                    command.Parameters.AddWithValue("@rating", rating);
+
+                    await command.ExecuteNonQueryAsync(); // Use async version
+                }
             }
-            
+
             reviews.Add(review);
         }
+
 
         public List<Review> GetAllReviews()
         {

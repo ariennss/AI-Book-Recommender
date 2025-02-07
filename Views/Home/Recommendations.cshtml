@@ -20,10 +20,10 @@
                 <img src="@book.ImgUrl" alt="@book.Title cover" class="card-img-top">
                 <div class="card-body">
                     <h5 class="card-title">@book.Title</h5>
-                    <p class="card-text">Book ID: @book.Id</p>
+                    <p class="card-text">Author: @book.AuthorName</p>
 
                     <!-- Rating Form for Most Popular Books -->
-                    <form action="@Url.Action("RateBook", "Home")" method="post">
+                    <form action="@Url.Action("AddRating", "Ratings")" method="post">
                         <input type="hidden" name="BookId" value="@book.Id" />
                         <div class="stars">
                             <input type="radio" id="star5-@book.Id" name="rating" value="5" />
@@ -71,7 +71,7 @@ else
                     <p class="card-text">Book ID: @book.Id</p>
 
                     <!-- Rating Form for Suggested Books -->
-                    <form action="@Url.Action("RateBook", "Home")" method="post">
+                    <form action="@Url.Action("AddRating", "Ratings")" method="post">
                         <input type="hidden" name="BookId" value="@book.Id" />
                         <div class="stars">
                             <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" />
@@ -104,3 +104,20 @@ else
     <a href="@Url.Action("RatingPage", "Home")" class="btn btn-primary d-block mb-2">Start rating</a>
     <a href="@Url.Action("AISuggestions", "Home")" class="btn btn-secondary d-block">Try books with AI</a>
 </div>
+
+<script>
+    function enableSubmit(bookId) {
+        document.getElementById('submit-btn-' + bookId).disabled = false;
+    }
+</script>
+
+<script>
+    function validateForm(bookId) {
+        let radios = document.querySelectorAll(`input[name="rating"]:checked`);
+        if (radios.length === 0) {
+            alert("Please select a rating before submitting!");
+            return false; // Stop form submission
+        }
+        return true; // Allow form submission
+    }
+</script>

@@ -4,7 +4,7 @@ namespace BookRecommender.Repositories
 {
     public interface IReviewRepository
     {
-        void AddReview(Review review);
+        Task AddReviewAsync(Review review);
         List<Review> GetAllReviews();
         List<Review> GetUserReview(string username);
 

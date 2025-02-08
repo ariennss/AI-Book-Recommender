@@ -108,7 +108,7 @@ namespace WebApplication1
                 //double collaborativeScore = collaborativeScores.GetValueOrDefault(bookId, 0);
 
                 // Weighted Combination (Adjust Weights as Needed)
-                double finalScore = (tfidfScore * 0.9) + (w2vScore * 0.1); /*+ (collaborativeScore * 0);*/
+                double finalScore = (tfidfScore * 0.5) + (w2vScore * 0.5); /*+ (collaborativeScore * 0);*/
                 combinedScores[bookId] = finalScore;
             }
 

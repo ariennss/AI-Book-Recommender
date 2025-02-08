@@ -1,114 +1,106 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
+/* Scrollable Container */
 .scrollable-container {
     display: flex;
     overflow-x: auto;
-    gap: 1rem; /* Space between cards */
-    padding: 1rem 0;
-    scrollbar-width: thin; /* For Firefox */
+    gap: 2rem; /* Increased space between cards */
+    padding: 2rem 1rem;
+    scrollbar-width: thin;
     scrollbar-color: #888 transparent;
 }
 
     .scrollable-container::-webkit-scrollbar {
-        height: 8px; /* Scrollbar height */
+        height: 8px;
     }
 
     .scrollable-container::-webkit-scrollbar-thumb {
-        background: #888; /* Scrollbar color */
+        background: #888;
         border-radius: 4px;
     }
 
-.card {
-    flex: 0 0 auto; /* Prevent shrinking and allow cards to fit content */
-    width: 200px; /* Set a fixed width for the cards */
-    border: 1px solid #ddd;
+/* Cards - Now With More Margin */
+/*.card {
+    flex: 0 0 auto;
+    width: 200px;*/ /* Keeping original width */
+    /*border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-}
+    margin: 1.5rem;*/ /* Added margin to separate the cards more */
+/*}
 
     .card:hover {
-        transform: scale(1.05); /* Slight zoom effect on hover */
-    }
+        transform: scale(1.05);*/ /* Slight zoom effect on hover */
+    /*}*/
 
-.card-img-top {
-    width: 100%; /* Image fills the card's width */
-    height: auto; /* Maintains aspect ratio */
-    object-fit: cover; /* Ensures the image looks good even if cropped */
-}
+/* Book Cover */
+/*.card-img-top {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}*/
 
-.card-body {
+/* Card Body */
+/*.card-body {
     padding: 0.75rem;
     text-align: center;
-}
+}*/
 
+/* Stars - Keep Rating as You Liked */
 .stars {
     display: flex;
     flex-direction: row-reverse;
-    justify-content: center; /* Center the stars horizontally */
+    justify-content: center;
     padding: 5px 0;
 }
 
     .stars input[type="radio"] {
-        display: none; /* Hide the radio buttons */
+        display: none;
     }
 
     .stars label {
         font-size: 2rem;
-        color: #ccc; /* Default color of stars */
+        color: #ccc;
         cursor: pointer;
-        transition: color 0.3s ease; /* Smooth color transition */
+        transition: color 0.3s ease;
     }
 
-        /* Highlight stars up to the checked one */
-        /*.stars input[type="radio"]:checked ~ label,
-        .stars label:hover ~ label {
-            color: #ffcc00;
-        }*/
-
-   /* .stars input:checked ~ label
-    .stars input:not(:checked) ~ label
-    .stars:not(:checked) > label ~ label {
-        color: #ffcc00;
-    }*/
-
+    /* Keep the improved rating highlight */
     .stars > input[type="radio"]:checked ~ label {
         color: #ffcc00;
     }
 
-.stars > label:hover:before,
-.stars > label:hover ~ label:before {
-    opacity: 1 !important;
-    /* shame... shame... shame... I'll explain that later*/
-}
+    .stars > label:hover:before,
+    .stars > label:hover ~ label:before {
+        opacity: 1 !important;
+    }
 
-
-
-
+/* Navigation */
 .homepageNav {
     font-family: "Roboto", serif;
     display: flex;
@@ -125,7 +117,7 @@ body {
     gap: 2rem;
 }
 
-.leftLogo{
+.leftLogo {
     max-height: 5rem;
 }
 
@@ -150,6 +142,7 @@ li a {
     color: unset;
 }
 
+/* Homepage Intro */
 .homepageIntro {
     padding-block-start: 3rem;
     display: flex;
@@ -184,22 +177,101 @@ li a {
     max-width: 5rem;
 }
 
-.topTitle h1 {
-    font-size: 2rem;
-}
+    .topTitle h1 {
+        font-size: 2rem;
+    }
 
 .introRight {
     padding-right: 5rem;
 }
 
-.introRight img {
-    max-height: 30rem;
-    margin-left: auto;
-}
+    .introRight img {
+        max-height: 30rem;
+        margin-left: auto;
+    }
 
+/* Footer */
 .homepageFooter {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+
+/* ===== Book Card ===== */
+.booksContainer {
+    overflow: scroll;
+}
+
+.bookCard {
+    height: fit-content;
+    padding: 50px 40px;
+    box-shadow: 2px 3px 33px 0px rgba(0,0,0,0.125);
+    display: flex;
+    gap: 2rem;
+}
+
+.cardImg {
+    overflow: hidden;
+    width: 225px;
+    height: 290px;
+}
+
+.cardImg img {
+    height: 100%;
+    width: 100%;
+}
+
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cardBody * {
+    margin: unset;
+}
+
+.bodyHeader {
+    display: grid;
+    column-gap: .5rem;
+    max-height: fit-content;
+}
+
+.headerTitle {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.headerAuthor {
+    font-size: 1rem;
+}
+
+.bodyDescription {
+    font-size: 1rem;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px;
+    max-height: 160px; /* Limiting to 2 lines */
+    -webkit-line-clamp: 10; /* Specify the number of lines */
+    -webkit-box-orient: vertical;
+}
+
+.bodyRatings {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stars label {
+    line-height: 1.5rem;
+}
+
+.ratingsButton {
+    border: unset;
+    border-radius: 1rem;
+    padding: .25rem 1.5rem;
 }

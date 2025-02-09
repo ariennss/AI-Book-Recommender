@@ -1,23 +1,67 @@
-﻿ @if (!User.Identity.IsAuthenticated)
-{
-    <div class="homepageIntro">
-        <div class="introLeft">
-            <div class="leftTop">
-                <div class="topTitle">
-                    <h1>My Book Recommender</h1>
-                    <p>A Subtitle</p>
-                </div>
-                <p class="topParagraph">A paragraph of text with an unassigned link A paragraph of text with an unassigned link A paragraph of text with an unassigned link </p>
-            </div>
-            <button class="leftButton">LESSSS GOOOOOOOO</button>
+﻿<div class="homepageIntro">
+    <div class="introLeft">
+        <p class="leftSubtitle">Powered by Arianna Franchetto</p>
+        <div class="leftTop">
+            <p class="topTitle">
+                Future energy: smart management and optimizations
+            </p>
+            <p class="topParagraph">
+                Turn your energy consumption into an efficient and sustainable
+                solution with our innovative application
+            </p>
         </div>
-        <div class="introRight">
-            <img src="/Images/introPlaceholder.webp" alt="Alternate Text" />
-        </div>
+        <button class="leftButton">Try it now</button>
     </div>
-}
-else
-{
-    <h1>Questa è la homepage.</h1>
-    <h1>Welcome @User.Identity.Name</h1>
-}
+    <div class="introRight">
+        <img src="/Images/topo.svg" alt="Alternate Text" />
+    </div>
+</div>
+    </header>
+<div class="landingPageDivisor"></div>
+<section class="featuresSection">
+    <div class="AISection">
+        <div class="sectionTop">
+            <div class="aiIcon">
+                <img src="/Images/ai.svg" alt="ai icon" />
+            </div>
+            <div class="topText">
+                <p class="textTitle">AI</p>
+                <p class="textParagraph">
+                    Learn the latest animation techniques to create stunning motion
+                    design and captivate your audience.
+                </p>
+            </div>
+        </div>
+        <button class="sectionButton">Get Started</button>
+    </div>
+    <div class="reccomendationsSection">
+        <div class="sectionTop">
+            <div class="reccomendationsIcon">
+                <img src="/Images/reccomendations.svg" alt="ai icon" />
+            </div>
+            <div class="topText">
+                <p class="textTitle">Reccomendations</p>
+                <p class="textParagraph">
+                    Learn the latest animation techniques to create stunning motion
+                    design and captivate your audience.
+                </p>
+            </div>
+        </div>
+        <button class="sectionButton">Get Started</button>
+    </div>
+    <div class="ratingsSection">
+        <div class="sectionTop">
+            <div class="ratingsIcon">
+                <img src="/Images/ratings.svg" alt="ai icon" />
+            </div>
+            <div class="topText">
+                <p class="textTitle">Ratings</p>
+                <p class="textParagraph">
+                    Learn the latest animation techniques to create stunning motion
+                    design and captivate your audience.
+                </p>
+            </div>
+        </div>
+        <button class="sectionButton">Get Started</button>
+    </div>
+</section>

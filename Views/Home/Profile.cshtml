@@ -1,0 +1,42 @@
+﻿@using WebApplication1.ViewModels
+@model ProfileModel
+
+<h1>Hello @Model.currentUserName</h1>
+
+@foreach (var book in Model.CurrentUserRatings)
+
+{
+    <div class="bookCard">
+        <div class="cardImg">
+            <img src="@book.ImgUrl" alt="@book.Title cover" />
+        </div>
+        <div class="cardBody">
+            <div class="bodyHeader">
+                <h2 class="headerTitle">@book.Title</h2>
+                <p class="headerAuthor">By @book.AuthorName</p>
+            </div>
+            <p class="bodyDescription">@book.Description</p>
+
+            <div class="rated-stars">
+                @foreach (var item in Model.BookIdRating)
+                {
+                    @if (item.Key == book.Id)
+                    {
+                        <!-- Display filled stars based on rating -->
+                        @for (int i = 0; i < item.Value; i++)
+                        {
+                            <span class="star">&#9733;</span> <!-- Unicode filled star -->
+                        }
+
+                        <!-- Display empty stars to make a total of 5 -->
+                        @for (int i = item.Value; i < 5; i++)
+                        {
+                            <span class="star empty">&#9734;</span> <!-- Unicode empty star -->
+                        }
+                    }
+                }
+            </div>
+        </div>
+
+    </div>
+}

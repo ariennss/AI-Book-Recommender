@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebApplication1;
 using static System.Reflection.Metadata.BlobBuilder;
+using Microsoft.AspNetCore.Http;
 
 namespace BookRecommender.Repositories
 {
@@ -17,9 +18,11 @@ namespace BookRecommender.Repositories
         private readonly string ConnectionString = "Data Source=C:\\tesi\\bookRecommender.db;Version=3";
         private List<Book> books = new List<Book>();
         private readonly IReviewRepository _reviewRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BookRepository(IReviewRepository reviewrepo)
+        public BookRepository(IReviewRepository reviewrepo, IHttpContextAccessor ca)
         {
+            _httpContextAccessor = ca;
             _reviewRepository = reviewrepo;
             using (var connection = new SQLiteConnection(ConnectionString))
             {
@@ -35,7 +38,7 @@ namespace BookRecommender.Repositories
                         books.Add(new Book
                         {
                             Id = reader.GetInt32(0),
-                            Title = reader.GetValue(1).ToString(),
+                            Title = Regex.Replace(reader.GetValue(1).ToString(), @"\s*\(.*?\)", "").Trim(),
                             AuthorId = reader.GetInt32(2),
                             Description = reader.GetString(3),
                             ImgUrl = largeUrlImage,
@@ -67,7 +70,7 @@ namespace BookRecommender.Repositories
         public List<Book> GetMostPopularBooks()
        {
             var reviews = _reviewRepository.GetAllReviews();
-            var currentUserReviews = reviews.Where(x => x.UserId == CurrentUser.username).ToList();
+            var currentUserReviews = reviews.Where(x => x.UserId == _httpContextAccessor.HttpContext?.User?.Identity?.Name).ToList();
             var currentUserBookIds = currentUserReviews.Select(r => r.BookId).ToHashSet();
             
             var bookPopularity = reviews

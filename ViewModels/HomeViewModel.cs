@@ -7,5 +7,8 @@ namespace WebApplication1.ViewModels
         public List<Book> MostPopularBooks { get; set; }
         public List<Book> SuggestedBooks { get; set; }
         public object BestReviewedBooks { get; set; }
+        public List<Book> SimilarToRandom { get; set; }
+
+        public Book RandomBook { get; set; }
     }
 }

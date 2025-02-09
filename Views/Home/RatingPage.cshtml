@@ -1,4 +1,39 @@
-﻿@page
-@model WebApplication1.Views.Home.RatingPageModel
-@{
+﻿@model WebApplication1.ViewModels.RatingsModel
+
+<h1>Start rating</h1>
+
+<p>Your ratings are important. Start rating so we can give you personalized recommendations!</p>
+
+<p><strong>Find books by their title</strong></p>
+
+<!-- Search Form -->
+<form method="post" action="@Url.Action("GetMatchingBook", "Home")">
+    <div class="mb-3">
+        <textarea class="form-control" name="bookTitle" rows="3" placeholder="The title of your book...">@Model.BookTitle</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Go</button>
+</form>
+
+<p><strong>Find books by their title</strong></p>
+<form method="post" action="@Url.Action("GetMatchingBook", "Home")">
+    <div class="mb-3">
+        <textarea class="form-control" name="bookAuthor" rows="3" placeholder="The author of your book...">@Model.AuthorName</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Go</button>
+</form>
+
+<!-- Show results only if recommendations are available -->
+@if (Model.MatchingBooks != null && Model.MatchingBooks.Any())
+{
+    <h2>Top AI-Suggested Books</h2>
+    <ul class="list-group">
+        @foreach (var book in Model.MatchingBooks)
+        {
+            <li class="list-group-item">
+                <h5>@book.Title</h5>
+                <p>Author: @book.AuthorName</p>
+                <p>@book.Description</p>
+            </li>
+        }
+    </ul>
 }

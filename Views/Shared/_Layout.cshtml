@@ -1,17 +1,74 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
+  <head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebApplication1</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/reset.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="homepageNav">
+    <title>Books landing page</title>
+    <link rel="stylesheet" href="~/css/reset.css" />
+    <link rel="stylesheet" href="~/css/landingPage.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+  </head>
+
+  <body class="landingPageBody">
+    <header class="landingPageHeader">
+      <nav class="homepageNav">
+        <div class="navLeft">
+          <a asp-controller="Home" asp-action="Homepage">
+            <img
+              src="/Images/logoplaceholder.svg"
+              alt="Book recommender logo"
+              class="leftLogo"
+            />
+          </a>
+          <a
+            class="leftTitle"
+            asp-area=""
+            asp-controller="Home"
+            asp-action="Homepage"
+            >Book reccomendations</a>
+        </div>
+        <div class="navRight">
+          <ul class="rightList">
+            <li>
+                        <a class="" asp-area="" asp-controller="Home" asp-action="AISuggestions">Try AI</a>
+            </li>
+            <li>
+              <a class="" asp-area="" asp-controller="Home" asp-action="Index"
+                >Reccomendations</a>
+            </li>
+            <li>
+                        <a class="" asp-area="" asp-controller="Home" asp-action="GoToReviewPage">Books</a>
+            </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                       <li>
+              <a
+                class=""
+                asp-area=""
+                asp-controller="Home"
+                               asp-action="GoToProfile">Profile</a>
+            </li>  
+                    }
+           
+          </ul>
+                @if (User.Identity.IsAuthenticated)
+                {
+                     <a class="logoutButton" asp-area="" asp-controller="Account" asp-action="Logout"
+            >Logout</a>
+                }
+                else
+                {
+                    <a class="loginButton" asp-area="" asp-controller="Account" asp-action="Login"
+            >Login</a
+          >
+                }
+
+        </div>
+      </nav>
+
+
+
+        @* <nav class="homepageNav">
             <div class="navLeft">
                 <a asp-controller="Home" asp-action="Homepage">
                     <img src="/Images/logoplaceholder.png" alt="bo" class="leftLogo" />
@@ -23,10 +80,10 @@
                     <a class="" asp-area="" asp-controller="Account" asp-action="Profile">About</a>
                 </li>
                 @* Gestione dinamica Login/Register/Logout/Profile *@
-                @if (User.Identity.IsAuthenticated)
+                @* @if (User.Identity.IsAuthenticated)
                 {
                     <li class="">
-                        <a class="" asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+                        <a class="" asp-area="" asp-controller="Home" asp-action="GoToProfile">Profile</a>
                     </li>
                     <li class="">
                         <a class="" asp-area="" asp-controller="Account" asp-action="Logout">Logout (@User.Identity.Name)</a>
@@ -42,15 +99,17 @@
                     </li>
                 }
             </ul>
-        </nav>
+        </nav> *@
     </header>
 
     @RenderBody()
 
-    <footer class="homepageFooter">
-        <div class="container">
-            &copy; 2025 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+     <footer class="landingPageFooter">
+      <a class="footerTitle" asp-area="" asp-controller="" asp-action=""
+        >Book reccomendations</a>
+      <p class="footerParagraph">
+        © 2025 Book reccomendations. All rights reserved. Powered by Arianna
+      </p>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

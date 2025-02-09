@@ -42,34 +42,34 @@ body {
         border-radius: 4px;
     }
 
-/* Cards - Now With More Margin */
-/*.card {
+ Cards - Now With More Margin 
+.card {
     flex: 0 0 auto;
-    width: 200px;*/ /* Keeping original width */
-    /*border: 1px solid #ddd;
+    width: 200px;  Keeping original width 
+    border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    margin: 1.5rem;*/ /* Added margin to separate the cards more */
-/*}
+    margin: 1.5rem;  Added margin to separate the cards more 
+}
 
     .card:hover {
-        transform: scale(1.05);*/ /* Slight zoom effect on hover */
-    /*}*/
+        transform: scale(1.05);  Slight zoom effect on hover 
+    }
 
-/* Book Cover */
-/*.card-img-top {
+ Book Cover 
+.card-img-top {
     width: 100%;
     height: auto;
     object-fit: cover;
-}*/
+}
 
-/* Card Body */
-/*.card-body {
+ Card Body 
+.card-body {
     padding: 0.75rem;
     text-align: center;
-}*/
+}
 
 /* Stars - Keep Rating as You Liked */
 .stars {
@@ -101,7 +101,7 @@ body {
     }
 
 /* Navigation */
-.homepageNav {
+/*.homepageNav {
     font-family: "Roboto", serif;
     display: flex;
     justify-content: space-between;
@@ -140,10 +140,10 @@ body {
 li a {
     text-decoration: none;
     color: unset;
-}
+}*/
 
 /* Homepage Intro */
-.homepageIntro {
+/*.homepageIntro {
     padding-block-start: 3rem;
     display: flex;
     justify-content: space-between;
@@ -188,15 +188,15 @@ li a {
     .introRight img {
         max-height: 30rem;
         margin-left: auto;
-    }
+    }*/
 
 /* Footer */
-.homepageFooter {
+/*.homepageFooter {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-}
+}*/
 
 
 /* ===== Book Card ===== */
@@ -274,4 +274,15 @@ li a {
     border: unset;
     border-radius: 1rem;
     padding: .25rem 1.5rem;
+}
+
+.rated-stars {
+    display: flex;
+    gap: 4px;
+    font-size: 1.5rem;
+    color: #ffcc00; /* Gold color for stars */
+}
+
+.star.empty {
+    color: #ccc; /* Gray color for unselected stars */
 }

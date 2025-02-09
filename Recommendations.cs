@@ -1,4 +1,6 @@
-﻿using BookRecommender.Repositories;
+﻿using BookRecommender.DBObjects;
+using BookRecommender.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1
 {
@@ -35,7 +37,7 @@ namespace WebApplication1
 
         public void CollaborativeFiltering()
         {
-            var currentUserReviews = _reviewRepository.GetUserReview(CurrentUser.username);
+            //var currentUserReviews = _reviewRepository.GetUserReview(User.Identity.);
         }
             
     }

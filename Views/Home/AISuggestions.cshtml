@@ -20,14 +20,63 @@
 @if (Model.Recommendations != null && Model.Recommendations.Any())
 {
     <h2>Top AI-Suggested Books</h2>
-    <ul class="list-group">
+    
         @foreach (var book in Model.Recommendations)
         {
-            <li class="list-group-item">
-                <h5>@book.Title</h5>
-                <p>Author: @book.AuthorName</p>
-                <p>@book.Description</p>
-            </li>
+            <div class="bookCard">
+                <div class="cardImg">
+                    <img src="@book.ImgUrl" alt="@book.Title cover" />
+                </div>
+                <div class="cardBody">
+                    <div class="bodyHeader">
+                        <h2 class="headerTitle">@book.Title</h2>
+                        <p class="headerAuthor">By @book.AuthorName</p>
+                    </div>
+                    <p class="bodyDescription">@book.Description</p>
+
+                    @if (Model.AlreadyRatedBooks.Count() > 0)
+                    {
+                        @foreach (var item in Model.AlreadyRatedBooks)
+                        {
+                            @if (item.Key.Id == book.Id)
+                            {
+                                <!-- Display filled stars based on rating -->
+                                @for (int i = 0; i < item.Value; i++)
+                                {
+                                    <span class="star">&#9733;</span> <!-- Unicode filled star -->
+                                }
+
+                                <!-- Display empty stars to make a total of 5 -->
+                                @for (int i = item.Value; i < 5; i++)
+                                {
+                                    <span class="star empty">&#9734;</span> <!-- Unicode empty star -->
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
+                            <input type="hidden" name="BookId" value="@book.Id" />
+                            <div class="stars">
+                                <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
+                                <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
+                                <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
+                                <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
+                                <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
+                                <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                            </div>
+                            <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
+                        </form>
+                    }
+
+
+                </div>
+            </div>
         }
-    </ul>
+    
 }

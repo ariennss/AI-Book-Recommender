@@ -17,6 +17,8 @@ namespace BookRecommender.DBObjects
         public List<Review> Reviews { get; set; }
         public List<string> Genres { get; set; }
 
+        public List<string> Tags { get; set; }
+
         public int RatingsCount { get; set; }   
     }
 }

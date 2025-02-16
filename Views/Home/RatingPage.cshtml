@@ -14,7 +14,7 @@
     <button type="submit" class="btn btn-primary">Go</button>
 </form>
 
-<p><strong>Find books by their title</strong></p>
+<p><strong>Find books by Author</strong></p>
 <form method="post" action="@Url.Action("GetMatchingBook", "Home")">
     <div class="mb-3">
         <textarea class="form-control" name="bookAuthor" rows="3" placeholder="The author of your book...">@Model.AuthorName</textarea>
@@ -25,15 +25,75 @@
 <!-- Show results only if recommendations are available -->
 @if (Model.MatchingBooks != null && Model.MatchingBooks.Any())
 {
-    <h2>Top AI-Suggested Books</h2>
-    <ul class="list-group">
         @foreach (var book in Model.MatchingBooks)
         {
-            <li class="list-group-item">
-                <h5>@book.Title</h5>
-                <p>Author: @book.AuthorName</p>
-                <p>@book.Description</p>
-            </li>
+            @if(Model.AlreadyRatedBooks.ContainsKey(book))
+            {
+                var item = Model.AlreadyRatedBooks.Keys.ToList().Where(x => x.Id == book.Id).First();
+                var rating = Model.AlreadyRatedBooks[item];
+                                <div class="bookCard">
+                                    <div class="cardImg">
+                                        <img src="@book.ImgUrl" alt="@book.Title cover" />
+                                     </div>
+                                    <div class="cardBody">
+                                        <div class="bodyHeader">
+                                            <h2 class="headerTitle">@book.Title</h2>
+                                            <p class="headerAuthor">By @book.AuthorName</p>
+                                        </div>
+                                        <p class="bodyDescription">@book.Description</p>
+
+                    <div class="bodyRatings">
+                        <div class="stars">
+                                       
+                                            @for (int i = 0; i < rating; i++)
+                                                            {
+                                                                <label class="starAlreadyRated">&#9733;</label> <!-- Unicode filled star -->
+                                                            }
+
+                                                            <!-- Display empty stars to make a total of 5 -->
+                                            @* @for (int i = rating; i < 5; i++)
+                                                            {
+                                                                <span class="star empty">&#9734;</span> <!-- Unicode empty star -->
+                                                            } *@
+                                        </div>
+                                    </div>
+                </div>
+            </div>
+
         }
-    </ul>
+        else
+        {
+            <div class="bookCard">
+                <div class="cardImg">
+                    <img src="@book.ImgUrl" alt="@book.Title cover" />
+                </div>
+                <div class="cardBody">
+                    <div class="bodyHeader">
+                        <h2 class="headerTitle">@book.Title</h2>
+                        <p class="headerAuthor">By @book.AuthorName</p>
+                    </div>
+                    <p class="bodyDescription">@book.Description</p>
+
+                    <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
+                        <input type="hidden" name="BookId" value="@book.Id" />
+                        <div class="stars">
+                            <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
+                            <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
+                            <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
+                            <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
+                            <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
+                            <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
+                            <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
+                            <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
+                            <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
+                            <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                        </div>
+                        <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
+                    </form>
+                </div>
+            </div>
+        }
+        
+        }
+   
 }

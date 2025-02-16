@@ -27,7 +27,7 @@ namespace BookRecommender.Repositories
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 connection.Open();
-                var command = new SQLiteCommand("SELECT Books.*, Authors.full_name, GROUP_CONCAT(Book_Genres.genre) AS Genres\r\n         FROM Books\r\n         INNER JOIN Authors ON Books.author_id = Authors.author_id\r\n         INNER JOIN Book_Genres ON Books.book_id = Book_Genres.book_id\r\n \r\n        where Books.lcv = 0 GROUP BY Books.book_id", connection);
+                var command = new SQLiteCommand("SELECT Books.*, Authors.full_name, GROUP_CONCAT(DISTINCT Book_Genres.genre) AS Genres, GROUP_CONCAT(DISTINCT Tags.tag) AS Tags FROM Books INNER JOIN Authors ON Books.author_id = Authors.author_id INNER JOIN Book_Genres ON Books.book_id = Book_Genres.book_id LEFT JOIN Tags ON Books.book_id = Tags.book_id WHERE Books.lcv = 0 GROUP BY Books.book_id", connection);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -44,7 +44,8 @@ namespace BookRecommender.Repositories
                             ImgUrl = largeUrlImage,
                             RatingsCount = reader.GetInt32(5),
                             AuthorName = reader.GetString(7),
-                            Genres = reader.IsDBNull(8) ? new List<string>() : reader.GetString(8).Split(',').ToList()
+                            Genres = reader.IsDBNull(8) ? new List<string>() : reader.GetString(8).Split(',').ToList(),
+                            Tags = reader.IsDBNull(9) ? new List<string>() : reader.GetString(9).Split(',').ToList(),
                         });
                     }
                 }

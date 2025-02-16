@@ -22,13 +22,15 @@ namespace WebApplication1
         private readonly string _dbPath = "Data Source=C:\\tesi\\bookRecommender.db;Version=3";
         private readonly ICollaborativeFiltering _collaborativeFiltering;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering, IReviewRepository rewrepo)
+        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering, IReviewRepository rewrepo, IHttpContextAccessor ca)
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000/") };
             _bookRepository = bookrepo;
             _collaborativeFiltering = collaborativeFiltering;
             _reviewRepository = rewrepo;
+            _contextAccessor = ca;
         }
 
         /// <summary>
@@ -118,11 +120,16 @@ namespace WebApplication1
             //var combinedScores = MergeSimilarityScores(tfidfSimilarities, word2vecSimilarities);
 
             // 7️⃣ Retrieve & Sort Books by Combined Score
+            var username = _contextAccessor.HttpContext?.User?.Identity?.Name;
+            var myReviews = _reviewRepository.GetUserReview(username);
+            var myBookIds = (_bookRepository.GetBooksByIds(myReviews.Select(x => x.BookId))).Select(x => x.Id).ToList();
+
             var topBooks = combinedScores
                .OrderByDescending(pair => pair.Value)
                .Take(20) // First sort by similarity
                .Select(pair => _bookRepository.GetBookById(pair.Key))
                .OrderByDescending(x => x.RatingsCount) // Then sort by popularity
+               .Where(x => !myBookIds.Contains(x.Id))
                .Take(10)
                .ToList();
 

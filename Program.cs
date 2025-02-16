@@ -35,6 +35,7 @@ builder.Services.AddSingleton<IBookRepository, BookRepository>();
 builder.Services.AddSingleton<IReviewRepository, ReviewRepository>();
 builder.Services.AddSingleton<ICollaborativeFiltering, CollaborativeFiltering>();
 builder.Services.AddSingleton<IHybridContentRecommendation, HybridContentRecommendation>();
+builder.Services.AddSingleton<ITagsSimilarity, TagsSimilarity>();
 
 var app = builder.Build();
 
@@ -59,7 +60,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=HomePage}/{id?}");
 
 //var a = new ReviewRepository();
-//var x = new BookRepository(a);
+//var x = new BookRepository(a, new HttpContextAccessor());
+//var ts = new TagsSimilarity(x);
 //var c = new Recommendations(x, a);
 //c.TopRatedBooks();
 //var cf = new CollaborativeFiltering(x,a);
@@ -75,6 +77,7 @@ app.MapControllerRoute(
 //var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a dog with superpowers");
 //var cf = new CollaborativeFiltering(x,a);
 //cf.SuggestionsFor("ariennss");
+//var books = ts.GetSimilarBooks(18839);
 
 
 

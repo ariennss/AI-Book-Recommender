@@ -286,3 +286,7 @@ li a {
 .star.empty {
     color: #ccc; /* Gray color for unselected stars */
 }
+
+.starAlreadyRated {
+    color: #ffcc00;
+}

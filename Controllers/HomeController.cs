@@ -15,14 +15,16 @@ namespace WebApplication1.Controllers
         private readonly IReviewRepository _reviewRepository;
         private readonly ICollaborativeFiltering _collaborativeFiltering;
         private readonly IHybridContentRecommendation _contentRecommender;
+        private readonly ITagsSimilarity _tagSimilarity;
 
-        public HomeController(ILogger<HomeController> logger, IBookRepository br, IReviewRepository rr, ICollaborativeFiltering collaborativeFiltering, IHybridContentRecommendation contentrec)
+        public HomeController(ILogger<HomeController> logger, IBookRepository br, IReviewRepository rr, ICollaborativeFiltering collaborativeFiltering, IHybridContentRecommendation contentrec, ITagsSimilarity ts)
         {
             _logger = logger;
             _bookRepository = br;
             _reviewRepository = rr;
             _collaborativeFiltering = collaborativeFiltering;
             _contentRecommender = contentrec;
+            _tagSimilarity = ts;
         }
 
         public IActionResult HomePage()
@@ -45,7 +47,12 @@ namespace WebApplication1.Controllers
                     var myBooks = _bookRepository.GetBooksByIds(myReviews.Select(x => x.BookId));
                     Random random = new Random();
                     var randomBook = myBooks.ElementAt(random.Next(myBooks.Count()));
-                    var similarToRandom = await _contentRecommender.FindTop10MostSimilarToDescriptionAsync(randomBook.Description);
+
+                    //QUESTO COMMENTATO E FATTO CON SIMILARITA TRA LE TRAME! 
+                    //var similarToRandom = await _contentRecommender.FindTop10MostSimilarToDescriptionAsync(randomBook.Description);
+
+                    //questo invece con il TF IDF dei Tag.
+                    var similarToRandom = _tagSimilarity.GetSimilarBooks(randomBook.Id);
                     var suggestedBooks = _collaborativeFiltering.SuggestionsFor(username);
                    
 
@@ -108,14 +115,23 @@ namespace WebApplication1.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
-            
-                // Here, you would process the query and return recommendations
-                // For now, just redirect back to the same page
+            var username = User.Identity.Name;
+            var myReviews = _reviewRepository.GetUserReview(username);
+            var myBooks = _bookRepository.GetBooksByIds(myReviews.Select(x => x.BookId));
+            var bookRatingDict = new Dictionary<Book, int>();
+            foreach (var book in myBooks)
+            {
+                bookRatingDict.Add(book, myReviews.Where(x => x.BookId == book.Id).Select(y => y.Rating).FirstOrDefault());
+            }
+
+            // Here, you would process the query and return recommendations
+            // For now, just redirect back to the same page
             var recommendations = _contentRecommender.FindTop10MostSimilarToDescriptionAsync(query).Result;
             var model = new AISuggestionsModel
             {
                 Query = query,
                 Recommendations = recommendations,
+                AlreadyRatedBooks = bookRatingDict
             };
             return View("AISuggestions", model);
         }
@@ -132,21 +148,38 @@ namespace WebApplication1.Controllers
                 {
                     BookTitle = "",
                     AuthorName = "",
-                    MatchingBooks = new List<Book>() 
+                    MatchingBooks = new List<Book>(), 
+                    AlreadyRatedBooks = new Dictionary<Book, int>(),
                 });
             }
         }
         public IActionResult GetMatchingBook(string bookTitle, string bookAuthor)
         {
-            if (bookTitle != null)
+            if (!User.Identity.IsAuthenticated)
             {
+                return RedirectToAction("Login", "Account");
+            }
+            var username = User.Identity.Name;
+            var myReviews = _reviewRepository.GetUserReview(username);
+            var myBooks = _bookRepository.GetBooksByIds(myReviews.Select(x => x.BookId));
+            var bookRatingDict = new Dictionary<Book, int>();
+            foreach (var book in myBooks)
+            {
+                bookRatingDict.Add(book, myReviews.Where(x => x.BookId == book.Id).Select(y => y.Rating).FirstOrDefault());
+            }
+
+            if (bookTitle != null)
+            { 
                 var books = _bookRepository.GetAllBooks();
                 var matchingBooks = books.Where(x => x.Title.ToLower().Contains(bookTitle.ToLower())).ToList();
+                
+
                 return View("RatingPage", new RatingsModel
                 {
                     BookTitle = bookTitle,
                     AuthorName = "",
                     MatchingBooks = matchingBooks,
+                    AlreadyRatedBooks = bookRatingDict,
                 });
             }
             else if (bookAuthor != null) {
@@ -157,6 +190,7 @@ namespace WebApplication1.Controllers
                     BookTitle = "",
                     AuthorName = bookAuthor,
                     MatchingBooks = matchingBooks,
+                    AlreadyRatedBooks = bookRatingDict,
                 });
             }
             else
@@ -166,10 +200,9 @@ namespace WebApplication1.Controllers
                     BookTitle = "",
                     AuthorName = "",
                     MatchingBooks = new List<Book>(),
+                    AlreadyRatedBooks = bookRatingDict,
                 });
             }
-
-            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult GoToProfile()

@@ -7,5 +7,7 @@ namespace WebApplication1.ViewModels
     {
         public string Query { get; set; } = "";
         public List<Book> Recommendations { get; set; } = new List<Book>();
+
+        public Dictionary<Book, int> AlreadyRatedBooks { get; set; }
     }
 }

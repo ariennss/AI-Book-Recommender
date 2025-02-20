@@ -22,7 +22,6 @@ namespace WebApplication1
             var currentUserReviews = reviews.Where(x => x.UserId == username).ToList();
             var currentUserBookIds = currentUserReviews.Select(r => r.BookId).ToHashSet();
 
-
             // Sort users by similarity (descending order)
             var sortedSimilarUsers = userSimilarities
                 .OrderByDescending(pair => pair.Value)
@@ -41,6 +40,7 @@ namespace WebApplication1
                 var similarUserReviews = reviews
                     .Where(r => r.UserId == similarUserId && r.Rating >= 4) // solo recensioni alte
                     .Where(r => !currentUserBookIds.Contains(r.BookId)) // evitando i libri che l'utente ha già recensito
+                    .OrderByDescending(r => r.Rating)
                     .Select(r => r.BookId)
                     .ToList();
 
@@ -53,8 +53,6 @@ namespace WebApplication1
 
                     suggestedBookIds.Add(bookId);
                 }
-
-
             }
 
             var suggestedBooks = _bookRepository.GetBooksByIds(suggestedBookIds);
@@ -68,14 +66,13 @@ namespace WebApplication1
             RatingsCount = reviews
                 .Count(r => r.BookId == book.Id)
         })
+        .Take(20) // prendo i primi 5 - variabile
         .OrderByDescending(x => x.AverageRating) // ordinati per media delle recensioni
         .ThenByDescending(x => x.RatingsCount)  // E poi ordinati per quante recensioni hanno
-        .Take(5) // prendo i primi 5 - variabile
+        
         .Select(x => x.Book)
         .ToList();
             return suggestedBooks.OrderByDescending(x => x.RatingsCount).Take(5).ToList();
-
-
         }
 
 
@@ -93,6 +90,7 @@ namespace WebApplication1
                 .GroupBy(r => r.UserId);
 
             // calcolo la similarità dei coseni per ogni utente.
+
             var userSimilarities = userGroups
                 .Select(group =>
                 {
@@ -100,7 +98,7 @@ namespace WebApplication1
                     var otherUserReviews = group.ToList();
 
                     // trovo per ogni utente le recensioni in comune con l'utente corrente
-                    var commonReviews = otherUserReviews
+                    List<Review> commonReviews = otherUserReviews
                         .Where(r => currentUserBookIds.Contains(r.BookId))
                         .ToList();
 

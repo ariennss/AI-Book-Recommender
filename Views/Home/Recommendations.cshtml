@@ -7,7 +7,7 @@
 
 <h1>Recommended Books</h1>
 
-<!-- Most Popular Books Section -->
+
 @if (Model.MostPopularBooks != null && Model.MostPopularBooks.Any())
 
 {
@@ -54,7 +54,7 @@ else
     <p>No popular books are available at the moment.</p>
 }
 
-<!-- Suggested Books Section -->
+
 @if (Model.SuggestedBooks != null && Model.SuggestedBooks.Any())
 
 {
@@ -93,31 +93,7 @@ else
             </div>
 
 
-            @* <div class="card">
-                <img src="@book.ImgUrl" alt="@book.Title cover" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">@book.Title</h5>
-                    <p class="card-text">Book ID: @book.Id</p>
-
-                    <!-- Rating Form for Suggested Books -->
-                    <form action="@Url.Action("AddRating", "Ratings")" method="post">
-                        <input type="hidden" name="BookId" value="@book.Id" />
-                        <div class="stars">
-                            <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)"/>
-                            <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
-                            <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
-                            <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
-                            <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
-                            <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary disabled" id="submit-btn-@book.Id">Rate</button>
-                    </form>
-                </div>
-            </div> *@
+           
         }
     </div>
 
@@ -168,31 +144,6 @@ else
             </div>
 
 
-            @* <div class="card">
-    <img src="@book.ImgUrl" alt="@book.Title cover" class="card-img-top">
-    <div class="card-body">
-    <h5 class="card-title">@book.Title</h5>
-    <p class="card-text">Book ID: @book.Id</p>
-
-    <!-- Rating Form for Suggested Books -->
-    <form action="@Url.Action("AddRating", "Ratings")" method="post">
-    <input type="hidden" name="BookId" value="@book.Id" />
-    <div class="stars">
-    <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)"/>
-    <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
-    <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
-    <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
-    <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
-    <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
-    <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
-    <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
-    <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
-    <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
-    </div>
-    <button type="submit" class="btn btn-primary disabled" id="submit-btn-@book.Id">Rate</button>
-    </form>
-    </div>
-    </div> *@
         }
     </div>
 

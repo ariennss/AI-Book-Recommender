@@ -39,23 +39,23 @@ namespace BookRecommender.Repositories
         public async Task AddReviewAsync(Review review)
         {
             int bookid = review.BookId;
-            string userid = review.UserId; // Username
+            string userid = review.UserId; // Username perché usato come chiave primaria
             int rating = review.Rating;
 
             using (var conn = new SQLiteConnection(ConnectionString))
             {
-                await conn.OpenAsync(); // Use async version
+                await conn.OpenAsync(); 
 
                 string query = $"INSERT INTO Reviews(book_id, user_id, rating) VALUES(@bookid, @userid, @rating)";
 
                 using (var command = new SQLiteCommand(query, conn))
                 {
-                    // Use parameters to prevent SQL injection
+                  
                     command.Parameters.AddWithValue("@bookid", bookid);
                     command.Parameters.AddWithValue("@userid", userid);
                     command.Parameters.AddWithValue("@rating", rating);
 
-                    await command.ExecuteNonQueryAsync(); // Use async version
+                    await command.ExecuteNonQueryAsync(); 
                 }
             }
 

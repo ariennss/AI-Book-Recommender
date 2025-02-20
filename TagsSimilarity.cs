@@ -8,8 +8,8 @@ namespace WebApplication1
 {
     public class TagsSimilarity : ITagsSimilarity
     {
-        private Dictionary<int, List<string>> bookTags = new(); // Stores book tags
-        private Dictionary<string, float> idfCache = new(); // Stores IDF values
+        private Dictionary<int, List<string>> bookTags = new(); // coppia book id - tag del libro
+        private Dictionary<string, float> idfCache = new(); // Per ogni tag calcola il suo IDF cioè quanto è importante considerando gli altri book
         private readonly IBookRepository _bookRepository;
 
         public TagsSimilarity(IBookRepository br)
@@ -20,14 +20,12 @@ namespace WebApplication1
         public List<Book> GetSimilarBooks(int inputBookId, int topN = 10)
         {
             var books = _bookRepository.GetAllBooks();
-            bookTags.Clear(); // Ensure fresh computation
-
+            bookTags.Clear();
             foreach (var book in books)
             {
-                bookTags[book.Id] = book.Tags ?? new List<string>(); // Ensure no null lists
+                bookTags[book.Id] = book.Tags ?? new List<string>(); 
             }
 
-            // ✅ Compute IDF before using TF-IDF
             ComputeIDF();
 
             if (!bookTags.ContainsKey(inputBookId) || bookTags[inputBookId].Count == 0)
@@ -43,15 +41,18 @@ namespace WebApplication1
 
             foreach (var (bookId, tags) in bookTags)
             {
-                if (bookId == inputBookId || tags.Count == 0) continue; // Skip input book & empty-tag books
+                if (bookId == inputBookId || tags.Count == 0)
+                {
+                    continue;
+                }
 
-                var bookTfidf = CalculateTFIDF(tags);
+                Dictionary<string, float> bookTfidf = CalculateTFIDF(tags);
                 float similarity = CosineSimilarity(inputTfidf, bookTfidf);
 
                 similarities[bookId] = similarity;
             }
 
-            // ✅ Sort and return the top N books
+            // ordino per trovare i più simili sulla base del risultato del calcolo della cosine similarity
             var similarBookIds = similarities
                 .OrderByDescending(x => x.Value)
                 .Take(topN)
@@ -99,7 +100,7 @@ namespace WebApplication1
                 }
             }
 
-            idfCache.Clear(); // ✅ Ensure fresh computation
+            idfCache.Clear(); 
 
             foreach (var (tag, docCount) in termDocumentFrequency)
             {

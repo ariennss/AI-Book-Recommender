@@ -10,7 +10,8 @@ namespace WebApplication1.Repositories
         private readonly string ConnectionString = "Data Source=C:\\tesi\\bookRecommender.db;Version=3";
         private static List<User> users = new List<User>();
 
-        // all'inizializzazione del repository fillo la lista così da fare le query poi in locale
+        // all'inizializzazione del repository fillo la lista così da fare le query poi in locale.
+        // Anche se non va fatto nel costruttore :(
         public UserRepository()
         {
             using (var connection = new SQLiteConnection(ConnectionString))

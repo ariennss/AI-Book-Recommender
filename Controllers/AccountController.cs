@@ -21,15 +21,14 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(string username, string password)
     {
-        // Qui dovresti implementare la logica di verifica delle credenziali
-        // (es. query al database)
+
         var current = _userRepository.CheckCredentials(username, password);
-        if (current != null) // Esempio semplificato
+        if (current != null)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, "User"), // Esempio di claim ruolo
+                new Claim(ClaimTypes.Role, "User"), 
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -86,22 +85,6 @@ public class AccountController : Controller
             Password = password,
             };
         _userRepository.AddUser(newUser);
-
-
-        // Qui dovresti implementare la logica di registrazione dell'utente:
-        // 1. Controllare se l'utente esiste già (es. query al database)
-        // 2. Hash della password (MOLTO IMPORTANTE)
-        // 3. Creazione del nuovo utente nel database
-
-        //if (1 == 1)
-        //{
-        //    ViewData["ErrorMessage"] = "Username già esistente.";
-        //    return View();
-        //}
-
-        // Esempio semplificato (SENZA HASHING - NON USARE IN PRODUZIONE)
-        // In una vera applicazione, usa PasswordHasher o un metodo simile
-        // Inserisci l'utente nel database qui...
 
         return RedirectToAction("Login"); // Reindirizza al login dopo la registrazione
     }

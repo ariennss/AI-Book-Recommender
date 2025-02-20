@@ -8,6 +8,6 @@ namespace WebApplication1.ViewModels
         public string AuthorName { get; set; }
 
         public List<Book> MatchingBooks { get; set; } = new List<Book>();
-        public Dictionary<Book,int> AlreadyRatedBooks { get; set; } // couple Book - its rating
+        public Dictionary<Book,int> AlreadyRatedBooks { get; set; } // coppia libro - rating che gli ho dato. 
     }
 }

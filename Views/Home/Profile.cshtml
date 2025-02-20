@@ -22,16 +22,16 @@
                 {
                     @if (item.Key == book.Id)
                     {
-                        <!-- Display filled stars based on rating -->
+               
                         @for (int i = 0; i < item.Value; i++)
                         {
-                            <span class="star">&#9733;</span> <!-- Unicode filled star -->
+                            <span class="star">&#9733;</span> 
                         }
 
-                        <!-- Display empty stars to make a total of 5 -->
+                      
                         @for (int i = item.Value; i < 5; i++)
                         {
-                            <span class="star empty">&#9734;</span> <!-- Unicode empty star -->
+                            <span class="star empty">&#9734;</span> 
                         }
                     }
                 }

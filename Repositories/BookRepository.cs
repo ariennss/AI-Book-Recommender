@@ -85,10 +85,9 @@ namespace BookRecommender.Repositories
                      PopularityScore = group.Count() * group.Average(r => r.Rating)
                  })
                  .OrderByDescending(b => b.PopularityScore)
-                 .Take(5) // Take the top 5 books
+                 .Take(5) 
                  .ToList();
 
-            // Get the actual Book objects based on BookId
             var mostPopularBooks = bookPopularity
                 .Join(books,
                       pop => pop.BookId,

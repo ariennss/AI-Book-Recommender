@@ -33,20 +33,19 @@ namespace WebApplication1
             _contextAccessor = ca;
         }
 
-        /// <summary>
-        /// Finds the top 10 books using both TF-IDF and Word2Vec similarity.
-        /// </summary>
         public async Task<List<Book>> FindTop10MostSimilarToDescriptionAsync(string description)
         {
+            // processamento del testo
+
             if (string.IsNullOrWhiteSpace(description))
             {
                 Console.WriteLine("Error: Empty input.");
                 return null;
             }
-            // 1️⃣ Preprocess and lemmatize all book descriptions for TF-IDF
+
             await PreprocessAndLemmatizeDescriptionsAsync();
 
-            // 2️⃣ Preprocess and lemmatize the input phrase
+
             var lemmatizedInput = await LemmatizeText(description);
             if (lemmatizedInput == null || !lemmatizedInput.Any())
             {
@@ -54,7 +53,7 @@ namespace WebApplication1
                 return null;
             }
 
-            // 3️⃣ Get Word2Vec embedding for the input phrase
+            // chiamata API per embedding frase in input
             var inputEmbedding = await GetWord2VecEmbedding(description);
             if (inputEmbedding == null || inputEmbedding.Count == 0)
             {
@@ -62,44 +61,12 @@ namespace WebApplication1
                 return null;
             }
 
-            // 4️⃣ Compute TF-IDF Similarity
-            var idf = ComputeIDF();
-            var inputTfidf = CalculateTFIDF(lemmatizedInput, idf);
+            // tf-idf frase in input
+            var idf = CalculateIDF();
+            var inputTfidf = CalculateTF(lemmatizedInput, idf);
             var tfidfSimilarities = ComputeTFIDFSimilarity(inputTfidf);
 
-            // 5️⃣ Compute Word2Vec Similarity
            var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
-
-            //var collaborativeScores = new Dictionary<int, double>();
-            //var similarUsers = _collaborativeFiltering.GetMostSimilarUsers("ariennss");
-            //foreach (var user in similarUsers)
-            //{
-            //    var userId = user.Key;
-            //    var similarityScore = user.Value;  // This is the cosine similarity score
-
-            //    var userRatings = _reviewRepository.GetUserReview(userId);  // Get this user's ratings
-
-            //    foreach (var rating in userRatings)
-            //    {
-            //        if (!collaborativeScores.ContainsKey(rating.BookId))
-            //        {
-            //            collaborativeScores[rating.BookId] = 0;
-            //        }
-
-            //        // Weighted Score: Rating * Similarity Score
-            //        collaborativeScores[rating.BookId] += rating.Rating * similarityScore;
-            //    }
-            //}
-
-            //// 4️⃣ Normalize Scores
-            //if (collaborativeScores.Count > 0 && collaborativeScores.Values.Max() > 0)
-            //{
-            //    double maxScore = collaborativeScores.Values.Max();
-            //    foreach (var bookId in collaborativeScores.Keys.ToList())
-            //    {
-            //        collaborativeScores[bookId] /= maxScore; // Normalize between 0 and 1
-            //    }
-            //}
 
             var combinedScores = new Dictionary<int, double>();
 
@@ -107,35 +74,31 @@ namespace WebApplication1
             {
                 double tfidfScore = tfidfSimilarities.GetValueOrDefault(bookId, 0);
                 double w2vScore = word2vecSimilarities.GetValueOrDefault(bookId, 0);
-                //double collaborativeScore = collaborativeScores.GetValueOrDefault(bookId, 0);
+                //double collaborativeScore = collaborativeScores.GetValueOrDefault(bookId, 0); // decommentare se voglio anche il peso per collaborative filtering
 
-                // Weighted Combination (Adjust Weights as Needed)
-                double finalScore = (tfidfScore * 0.5) + (w2vScore * 0.5); /*+ (collaborativeScore * 0);*/
+                // Testare quale combinazione di peso funziona meglio
+                double finalScore = (tfidfScore * 0.5) + (w2vScore * 0.5); /*+ (collaborativeScore * 0);*/ // se voglio pesare anche per collaborative filtering
                 combinedScores[bookId] = finalScore;
             }
 
-
-
-            // UNCOMMENT IF NEEDED COMBINED SCORES THAT DO NOT CONSIDER COLLABORATIVE FILTERING!
-            //var combinedScores = MergeSimilarityScores(tfidfSimilarities, word2vecSimilarities);
-
-            // 7️⃣ Retrieve & Sort Books by Combined Score
+            // eliminare libri che ho già letto.
             var username = _contextAccessor.HttpContext?.User?.Identity?.Name;
             var myReviews = _reviewRepository.GetUserReview(username);
             var myBookIds = (_bookRepository.GetBooksByIds(myReviews.Select(x => x.BookId))).Select(x => x.Id).ToList();
 
             var topBooks = combinedScores
                .OrderByDescending(pair => pair.Value)
-               .Take(20) // First sort by similarity
+               .Take(20) // Sort per somiglianza
                .Select(pair => _bookRepository.GetBookById(pair.Key))
-               .OrderByDescending(x => x.RatingsCount) // Then sort by popularity
+               .OrderByDescending(x => x.RatingsCount) // Poi sort per quante recensioni ha 
                .Where(x => !myBookIds.Contains(x.Id))
                .Take(10)
                .ToList();
 
 
             return topBooks;
-            // Print Results
+
+            // test
             Console.WriteLine("Top 10 most similar books:");
             foreach (var book in topBooks)
             {
@@ -143,9 +106,7 @@ namespace WebApplication1
             }
         }
 
-        /// <summary>
-        /// Calls the Python API to get the Word2Vec embedding of the input phrase.
-        /// </summary>
+
         private async Task<List<float>> GetWord2VecEmbedding(string text)
         {
             try
@@ -170,9 +131,6 @@ namespace WebApplication1
             return new List<float>();
         }
 
-        /// <summary>
-        /// Preprocesses and lemmatizes all book descriptions for TF-IDF.
-        /// </summary>
         private async Task PreprocessAndLemmatizeDescriptionsAsync()
         {
             var allBooks = _bookRepository.GetAllBooks();
@@ -239,16 +197,16 @@ namespace WebApplication1
         private Dictionary<int, float> ComputeTFIDFSimilarity(Dictionary<string, float> inputTfidf)
         {
             var similarities = new Dictionary<int, float>();
-            var idf = ComputeIDF();  // Compute IDF once and store it as float values
+            var idf = CalculateIDF(); 
 
-            // Get all unique terms in the vocabulary for proper alignment
+           
             var allTerms = new HashSet<string>(inputTfidf.Keys);
 
             foreach (var (bookId, words) in descriptionVectors)
             {
-                var bookTfidf = CalculateTFIDF(words, idf);
+                var bookTfidf = CalculateTF(words, idf);
 
-                // Ensure both input and book vectors are properly aligned
+                
                 var inputVector = allTerms.Select(term => inputTfidf.GetValueOrDefault(term, 0f)).ToList();
                 var bookVector = allTerms.Select(term => bookTfidf.GetValueOrDefault(term, 0f)).ToList();
 
@@ -260,17 +218,7 @@ namespace WebApplication1
         }
 
 
-
-        private Dictionary<int, float> MergeSimilarityScores(Dictionary<int, float> tfidfScores, Dictionary<int, float> w2vScores)
-        {
-            return tfidfScores.Keys
-                .Union(w2vScores.Keys)
-                .ToDictionary(bookId => bookId, bookId =>
-                    (tfidfScores.GetValueOrDefault(bookId, 0) * 0.5f) +
-                    (w2vScores.GetValueOrDefault(bookId, 0) * 0.5f));
-        }
-
-        private Dictionary<string, float> ComputeIDF()
+        private Dictionary<string, float> CalculateIDF()
         {
             var totalDocuments = (float)descriptionVectors.Count;
             var termDocumentFrequency = new Dictionary<string, int>();
@@ -288,7 +236,7 @@ namespace WebApplication1
         }
 
 
-        private Dictionary<string, float> CalculateTFIDF(List<string> words, Dictionary<string, float> idf)
+        private Dictionary<string, float> CalculateTF(List<string> words, Dictionary<string, float> idf)
         {
             var termFrequency = words
                 .GroupBy(w => w)

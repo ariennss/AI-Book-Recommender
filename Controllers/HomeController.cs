@@ -51,7 +51,7 @@ namespace WebApplication1.Controllers
                     //QUESTO COMMENTATO E FATTO CON SIMILARITA TRA LE TRAME! 
                     //var similarToRandom = await _contentRecommender.FindTop10MostSimilarToDescriptionAsync(randomBook.Description);
 
-                    //questo invece con il TF IDF dei Tag.
+                    //questo invece con il TF IDF dei Tag. 
                     var similarToRandom = _tagSimilarity.GetSimilarBooks(randomBook.Id);
                     var suggestedBooks = _collaborativeFiltering.SuggestionsFor(username);
                    
@@ -69,7 +69,7 @@ namespace WebApplication1.Controllers
                 }
                 else
                 {
-                    return View("ColdUser", new HomeViewModel { MostPopularBooks = mostPopularBooks }); //TODO: creare questa view
+                    return View("ColdUser", new HomeViewModel { MostPopularBooks = mostPopularBooks });
                 }
             }
             else
@@ -100,9 +100,9 @@ namespace WebApplication1.Controllers
             {
                 return View(new AISuggestionsModel
                 {
-                    Query = "", // Default empty query
-                    Recommendations = new List<Book>() // Empty list to avoid null errors
-                });
+                    Query = "",
+                    Recommendations = new List<Book>()
+                }); //Modell vuoto quando voglio caricare la pagina al primo giro, senza che ancora ho richiesto nulla.
             }
                 
         }
@@ -124,15 +124,13 @@ namespace WebApplication1.Controllers
                 bookRatingDict.Add(book, myReviews.Where(x => x.BookId == book.Id).Select(y => y.Rating).FirstOrDefault());
             }
 
-            // Here, you would process the query and return recommendations
-            // For now, just redirect back to the same page
             var recommendations = _contentRecommender.FindTop10MostSimilarToDescriptionAsync(query).Result;
             var model = new AISuggestionsModel
             {
                 Query = query,
                 Recommendations = recommendations,
                 AlreadyRatedBooks = bookRatingDict
-            };
+            }; //Modello valorizzato con i suggerimenti.
             return View("AISuggestions", model);
         }
 

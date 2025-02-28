@@ -63,13 +63,15 @@ namespace WebApplication1
 
             // tf-idf frase in input
             var idf = CalculateIDF();
-            var inputTfidf = CalculateTF(lemmatizedInput, idf);
+            var inputTfidf = CalculateTFIDF(lemmatizedInput, idf);
             var tfidfSimilarities = ComputeTFIDFSimilarity(inputTfidf);
 
            var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
 
+            // si crea il dizionario per storare lo score pesato tra tfidf e w2v
             var combinedScores = new Dictionary<int, double>();
 
+            //per ogni libro prendiamo la similarità tfidf e la similarità w2v e ne facciamo una media. Storiamo la media nel dictionary combinedScore.
             foreach (var bookId in tfidfSimilarities.Keys)
             {
                 double tfidfScore = tfidfSimilarities.GetValueOrDefault(bookId, 0);
@@ -111,9 +113,9 @@ namespace WebApplication1
         {
             try
             {
-                var payload = new StringContent($"{{\"text\":\"{text}\"}}", Encoding.UTF8, "application/json");
-                Console.WriteLine($"Payload being sent: {payload.ReadAsStringAsync().Result}");
-                var response = await _httpClient.PostAsync("word2vec_embed", payload);
+                var inputToEmbed = new StringContent($"{{\"text\":\"{text}\"}}", Encoding.UTF8, "application/json");
+                Console.WriteLine($"Payload being sent: {inputToEmbed.ReadAsStringAsync().Result}");
+                var response = await _httpClient.PostAsync("word2vec_embed", inputToEmbed);
                 var resulttest = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Response Status Code: {response.StatusCode}");
                 Console.WriteLine($"Response Content: {resulttest}");
@@ -134,12 +136,12 @@ namespace WebApplication1
         private async Task PreprocessAndLemmatizeDescriptionsAsync()
         {
             var allBooks = _bookRepository.GetAllBooks();
-            var descriptionsPayload = new { descriptions = allBooks.Select(book => new { id = book.Id, text = book.Description }).ToList() };
+            var allBookDescriptions = new { descriptions = allBooks.Select(book => new { id = book.Id, text = book.Description }).ToList() };
 
             try
             {
                 var response = await _httpClient.PostAsync("batch_lemmatize",
-                    new StringContent(JsonSerializer.Serialize(descriptionsPayload), Encoding.UTF8, "application/json"));
+                    new StringContent(JsonSerializer.Serialize(allBookDescriptions), Encoding.UTF8, "application/json"));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -204,7 +206,7 @@ namespace WebApplication1
 
             foreach (var (bookId, words) in descriptionVectors)
             {
-                var bookTfidf = CalculateTF(words, idf);
+                var bookTfidf = CalculateTFIDF(words, idf);
 
                 
                 var inputVector = allTerms.Select(term => inputTfidf.GetValueOrDefault(term, 0f)).ToList();
@@ -236,7 +238,7 @@ namespace WebApplication1
         }
 
 
-        private Dictionary<string, float> CalculateTF(List<string> words, Dictionary<string, float> idf)
+        private Dictionary<string, float> CalculateTFIDF(List<string> words, Dictionary<string, float> idf)
         {
             var termFrequency = words
                 .GroupBy(w => w)
@@ -252,10 +254,10 @@ namespace WebApplication1
             if (vec1.Count != vec2.Count) return 0f;
 
             float dotProduct = vec1.Zip(vec2, (a, b) => a * b).Sum();
-            float magnitude1 = (float)Math.Sqrt(vec1.Sum(v => v * v));
-            float magnitude2 = (float)Math.Sqrt(vec2.Sum(v => v * v));
+            float primaParteDivisore = (float)Math.Sqrt(vec1.Sum(v => v * v));
+            float secondaParteDivisore = (float)Math.Sqrt(vec2.Sum(v => v * v));
 
-            return magnitude1 == 0 || magnitude2 == 0 ? 0f : dotProduct / (magnitude1 * magnitude2);
+            return primaParteDivisore == 0 || secondaParteDivisore == 0 ? 0f : dotProduct / (primaParteDivisore * secondaParteDivisore);
         }
 
     }

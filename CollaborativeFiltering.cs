@@ -128,13 +128,6 @@ namespace WebApplication1
 
             return userSimilarities;
 
-            // parte tolta perché non è questo il luogo adatto.
-
-            //// Sort users by similarity (descending order)
-            //var sortedSimilarUsers = userSimilarities
-            //    .OrderByDescending(pair => pair.Value)
-            //    .Select(pair => pair.Key)
-            //    .ToList();
         }
     }
 }

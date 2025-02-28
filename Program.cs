@@ -9,6 +9,7 @@
 //TODO: nel collaborative filtering tenere conto della quantità di libri in comune a parità di punteggio per determinarel'utente piu simile
 
 
+using BookRecommender.DBObjects;
 using BookRecommender.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Data.SQLite;
@@ -62,20 +63,27 @@ app.MapControllerRoute(
 //var a = new ReviewRepository();
 //var x = new BookRepository(a, new HttpContextAccessor());
 //var ts = new TagsSimilarity(x);
-//var c = new Recommendations(x, a);
-//c.TopRatedBooks();
-//var cf = new CollaborativeFiltering(x,a);
-//var e = x.GetMostPopularBooks();
-//var tfids = new HybridContentRecommendation(x, cf, a);
+////var c = new Recommendations(x, a);
+////c.TopRatedBooks();
+////var cf = new CollaborativeFiltering(x,a);
+////var e = x.GetMostPopularBooks();
+////var tfids = new HybridContentRecommendation(x, cf, a);
 
 
 
-//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
-//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a horror story about two sisters in an abandoned house");
-//var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a dystopian society");
-//var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a vampire love story");
-//var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a dog with superpowers");
-//var cf = new CollaborativeFiltering(x,a);
+////var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a love story in an ancient castle");
+////var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a horror story about two sisters in an abandoned house");
+////var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("wizards and witches");
+////var x66 = tfids.FindTop10MostSimilarToDescriptionAsync("a dystopian society");
+////var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a vampire love story");
+////var x46 = tfids.FindTop10MostSimilarToDescriptionAsync("a dog with superpowers");
+////var cf = new CollaborativeFiltering(x,a);
+//var b = new Book
+//{
+//    Id = 999999999,
+//    Title = "prova",
+//    Description = ""
+//}
 //cf.SuggestionsFor("ariennss");
 //var books = ts.GetSimilarBooks(18839);
 

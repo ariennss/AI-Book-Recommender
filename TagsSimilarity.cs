@@ -15,17 +15,16 @@ namespace WebApplication1
         public TagsSimilarity(IBookRepository br)
         {
             _bookRepository = br;
-        }
-
-        public List<Book> GetSimilarBooks(int inputBookId, int topN = 10)
-        {
             var books = _bookRepository.GetAllBooks();
             bookTags.Clear();
             foreach (var book in books)
             {
-                bookTags[book.Id] = book.Tags ?? new List<string>(); 
+                bookTags[book.Id] = book.Tags ?? new List<string>();
             }
+        }
 
+        public List<Book> GetSimilarBooks(int inputBookId, int topN = 10)
+        {
             ComputeIDF();
 
             if (!bookTags.ContainsKey(inputBookId) || bookTags[inputBookId].Count == 0)
@@ -106,6 +105,31 @@ namespace WebApplication1
             {
                 idfCache[tag] = (float)Math.Log((float)totalBooks / (1 + docCount));
             }
+        }
+
+        public Dictionary<int, float> GetTagSimilarity(List<string> lemmatizedInput)
+        {
+            ComputeIDF();
+
+            
+            var inputTfidf = CalculateTFIDF(lemmatizedInput);
+
+            var similarities = new Dictionary<int, float>();
+
+            foreach (var (bookId, tags) in bookTags)
+            {
+                if (tags.Count == 0)
+                {
+                    continue;
+                }
+
+                Dictionary<string, float> bookTfidf = CalculateTFIDF(tags);
+                float similarity = CosineSimilarity(inputTfidf, bookTfidf);
+
+                similarities[bookId] = similarity;
+            }
+
+            return similarities;
         }
     }
 }

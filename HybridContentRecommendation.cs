@@ -23,14 +23,16 @@ namespace WebApplication1
         private readonly ICollaborativeFiltering _collaborativeFiltering;
         private readonly IReviewRepository _reviewRepository;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ITagsSimilarity _tagSimilarity;
 
-        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering, IReviewRepository rewrepo, IHttpContextAccessor ca)
+        public HybridContentRecommendation(IBookRepository bookrepo, ICollaborativeFiltering collaborativeFiltering, IReviewRepository rewrepo, IHttpContextAccessor ca, ITagsSimilarity ts)
         {
             _httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000/") };
             _bookRepository = bookrepo;
             _collaborativeFiltering = collaborativeFiltering;
             _reviewRepository = rewrepo;
             _contextAccessor = ca;
+            _tagSimilarity = ts;
         }
 
         public async Task<List<Book>> FindTop10MostSimilarToDescriptionAsync(string description)
@@ -67,6 +69,7 @@ namespace WebApplication1
             var tfidfSimilarities = ComputeTFIDFSimilarity(inputTfidf);
 
            var word2vecSimilarities = await ComputeWord2VecSimilarities(inputEmbedding);
+            var tagSimilarities = _tagSimilarity.GetTagSimilarity(lemmatizedInput);
 
             var combinedScores = new Dictionary<int, double>();
 
@@ -74,10 +77,11 @@ namespace WebApplication1
             {
                 double tfidfScore = tfidfSimilarities.GetValueOrDefault(bookId, 0);
                 double w2vScore = word2vecSimilarities.GetValueOrDefault(bookId, 0);
+                double tagScore = tagSimilarities.GetValueOrDefault(bookId, 0);
                 //double collaborativeScore = collaborativeScores.GetValueOrDefault(bookId, 0); // decommentare se voglio anche il peso per collaborative filtering
 
                 // Testare quale combinazione di peso funziona meglio
-                double finalScore = (tfidfScore * 0.5) + (w2vScore * 0.5); /*+ (collaborativeScore * 0);*/ // se voglio pesare anche per collaborative filtering
+                double finalScore = (tfidfScore * 0.3) + (w2vScore * 0.3) + (tagScore * 0.4); /*+ (collaborativeScore * 0);*/ // se voglio pesare anche per collaborative filtering
                 combinedScores[bookId] = finalScore;
             }
 

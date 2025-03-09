@@ -1,5 +1,6 @@
 ﻿using BookRecommender.DBObjects;
 using BookRecommender.Repositories;
+using javax.xml.transform;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -24,10 +25,20 @@ namespace WebApplication1.Controllers
 
         public async Task<IActionResult> AddRating(int BookId, int rating)
         {
-          
+            int[] ok = { 1, 2, 3, 4, 5 };
+                if (ok.Contains(rating))
+            {
                 var review = new Review { BookId = BookId, Rating = rating, UserId = _contextAccessor.HttpContext?.User?.Identity?.Name };
                 await _reviewRepository.AddReviewAsync(review);
                 return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return BadRequest("An error occurred while processing your request.");
+            }
+
+            
+               
             
          
         }

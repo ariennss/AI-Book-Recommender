@@ -3,17 +3,153 @@
     <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
 }
 
-<form asp-controller="Account" asp-action="Register" method="post">
-    <label for="username">Username:</label><br>
-    <input type="text" id="username" name="username" required><br><br>
 
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password" required><br><br>
+<div class="homepageIntro">
+    <div class="introLeftMouse">
+        <img src="~/Images/topo.svg" alt="topo" />
+    </div>
+    <div class="introRight">
+        <div class="rightContainer">
+            <div class="rightIntro">
+                <h1 class="introTitle">Welcome to Book Recommender</h1>
+                <p class="introSubtitle">Insert your credentials</p>
+            </div>
+            <form asp-controller="Account" asp-action="Register" method="post" class="registerForm">
+                <label for="name" class="nameLabel">
+                    Name
+                    <input type="text"
+                           id="username"
+                           name="username"
+                           placeholder="Name"
+                           class="nameInput" />
+                </label>
+                <label for="email" class="emailLabel">
+                    Email
+                    <input type="email"
+                           id="email"
+                           placeholder="Email"
+                           class="emailInput" />
+                </label>
+                <label for="password" class="passwordLabel">
+                    Password
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Password"
+                           class="passwordInput" />
+                </label>
+                <label for="confirmPassword" class="confirmPasswordLabel">
+                    Password
+                    <input type="password"
+                           id="confirmPassword"
+                           placeholder="Confirm Password"
+                           class="confirmPasswordInput" />
+                </label>
+                <button type="submit" class="registerSubmit">Register</button>
+                <p class="registerParagraph">
+                    Already a member?
+                    <a asp-controller="Account" asp-action="Login" class="registerButton">Log In</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
 
-    <label for="confirmPassword">Conferma Password:</label><br>
-    <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+<style>
+    .homepageIntro {
+        display: flex;
+        padding-inline: 3.75rem;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
 
-    <input type="submit" value="Registrati">
-</form>
+    .introLeftMouse {
+        flex: 1;
+    }
 
-<p>Oppure <a asp-controller="Account" asp-action="Login">Accedi</a></p>
+    .introRight {
+        flex: 1.5;
+    }
+
+    .rightContainer {
+        background-color: white;
+        border-radius: 1rem;
+        display: grid;
+        place-content: center;
+        row-gap: 2rem;
+        padding-block: 3.75rem;
+        margin-inline: 3rem;
+    }
+
+    .rightIntro {
+        display: grid;
+        row-gap: 1rem;
+    }
+
+    .introTitle {
+        font-size: 1.5rem;
+        line-height: 1rem;
+    }
+
+    .introSubtitle {
+        font-size: 1rem;
+        opacity: 40%;
+        font-weight: 400;
+        line-height: 1rem;
+    }
+
+    .loginForm,
+    .registerForm {
+        display: grid;
+        row-gap: 1rem;
+    }
+
+    .nameLabel,
+    .passwordLabel,
+    .emailLabel,
+    .confirmPasswordLabel {
+        display: grid;
+        row-gap: 0.5rem;
+        font-size: 0.875rem;
+        opacity: 50%;
+        font-weight: 500;
+    }
+
+    .nameInput,
+    .passwordInput,
+    .emailInput,
+    .confirmPasswordInput {
+        border: unset;
+        border-bottom: 2px solid var(--primary-color);
+        background-color: transparent;
+        padding-block: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .loginSubmit,
+    .registerSubmit {
+        border: unset;
+        background-color: var(--primary-color);
+        border-radius: 1rem;
+        padding-block: 0.75rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        margin-block-start: 2rem;
+    }
+
+    .signUpParagraph,
+    .registerParagraph {
+        font-size: 0.75rem;
+        opacity: 70%;
+    }
+
+    .signUpButton,
+    .registerButton {
+        text-decoration: none;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+</style>

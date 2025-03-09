@@ -1,9 +1,9 @@
-﻿@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .landingPageBody {
     --primary-color: #e9bb62;
     background-color: #f2f2f2;
-    font-family: "Roboto", serif;
+    font-family: "Poppins", sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -107,6 +107,7 @@ li {
     cursor: pointer;
     border: unset;
     max-width: fit-content;
+    text-decoration: none;
     transition: all 0.25s ease-in-out;
 }
 
@@ -122,6 +123,7 @@ li {
 .homepageIntro {
     display: flex;
     gap: 3rem;
+    padding-inline: 3.75rem;
 }
 
 .introLeft {
@@ -166,7 +168,7 @@ li {
     border-top: 1px solid black;
     padding-bottom: 2rem;
     margin-inline: 3.75rem;
-    opacity: 10%;
+    opacity: 0%;
 }
 
 /* Features Section */
@@ -231,13 +233,13 @@ li {
 .landingPageFooter {
     background-color: white;
     padding-block: 1rem;
-    padding-inline: 3.75rem;
+    padding-inline: 1.8rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
+    border-radius: 1rem;
     margin-top: 2rem;
+    margin-inline: 3.75rem;
 }
 
 .footerTitle {

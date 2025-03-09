@@ -1,12 +1,13 @@
 ﻿@using WebApplication1.ViewModels
 @model ProfileModel
 
+<main class="main">
 <h1>Hello @Model.currentUserName</h1>
 
 @foreach (var book in Model.CurrentUserRatings)
 
 {
-    <div class="bookCard">
+    <div class="bookCard secondBookCard">
         <div class="cardImg">
             <img src="@book.ImgUrl" alt="@book.Title cover" />
         </div>
@@ -15,7 +16,7 @@
                 <h2 class="headerTitle">@book.Title</h2>
                 <p class="headerAuthor">By @book.AuthorName</p>
             </div>
-            <p class="bodyDescription">@book.Description</p>
+            <p class="bodyDescription thisDescription">@book.Description</p>
 
             <div class="rated-stars">
                 @foreach (var item in Model.BookIdRating)
@@ -40,3 +41,23 @@
 
     </div>
 }
+</main>
+
+<style>
+
+    .main {
+        padding-inline: 3.75rem;
+    }
+
+    
+
+    .secondBookCard {
+        margin-bottom: 1rem;
+    }
+
+    .thisDescription {
+        max-width: 600px;
+        line-height: 23px;
+    }
+
+</style>

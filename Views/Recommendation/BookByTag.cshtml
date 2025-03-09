@@ -1,40 +1,62 @@
-﻿@model WebApplication1.ViewModels.RatingsModel
+﻿@model WebApplication1.ViewModels.BookByTagModel
 
 <main class="main">
-    <h1>Start rating</h1>
-
-    <p>Your ratings are important. Start rating so we can give you personalized recommendations!</p>
+    <h1>Find new books similar to those you already liked</h1>
 
 
+    
 
 
-    <form method="post" action="@Url.Action("GetMatchingBook", "Home")" class="formRicerca">
-        <p class="divTitolo">Find books by their title:</p>
+    <form method="post" class="formRicerca" action="@Url.Action("ShowResults", "Recommendation")">
+        <p class="divTitolo">Type the title of a book you liked, we'll find the most similar ones!</p>
+
         <div class="divForm">
-            <input class="searchBar" name="bookTitle"  placeholder="The title of your book..." />@* @Model.BookTitle</input> *@
+            <input class="searchBar" name="title" placeholder="Type a book title here..." />
             <button type="submit" class="buttonForSearch">Go</button>
         </div>
+       
     </form>
 
-
-    <form method="post" action="@Url.Action("GetMatchingBook", "Home")" class="formRicerca">
-        <p class="divTitolo">Find books by their author:</p>
-        <div class="divForm">
-            <input class="searchBar" name="bookAuthor"  placeholder="The author of your book..." />@* @Model.AuthorName</input> *@
-            <button type="submit" class="buttonForSearch">Go</button>
-        </div>
-    </form>
-
-
-    @if (Model.MatchingBooks != null && Model.MatchingBooks.Any())
+    @if (Model.SearchedBooks != null && Model.SearchedBooks.Any())
     {
-        @foreach (var book in Model.MatchingBooks)
+        @foreach (var book in Model.SearchedBooks)
         {
+            <div class="bookCard secondBookCard">
+                <div class="cardImg">
+                    <img src="@book.ImgUrl" alt="@book.Title cover" />
+                </div>
+                <div class="cardBody">
+                    <div class="bodyHeader">
+                        <h2 class="headerTitle">@book.Title</h2>
+                        <p class="headerAuthor">By @book.AuthorName</p>
+                    </div>
+                    <form action="@Url.Action("GetBooksByTags", "Recommendation")" method="post" class="bodyRatings">
+                        <input type="hidden" name="BookId" value="@book.Id" />
+                        <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Find similar books</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+
+    @if (Model.ChosenOne != null)
+    {
+        <p>Since you liked @Model.ChosenOne.Title...</p>
+    }
+
+    @if (Model.Recommendations != null && Model.Recommendations.Any())
+    {
+        <h2></h2>
+
+        @foreach (var book in Model.Recommendations)
+        {
+
+
             @if (Model.AlreadyRatedBooks.ContainsKey(book))
             {
                 var item = Model.AlreadyRatedBooks.Keys.ToList().Where(x => x.Id == book.Id).First();
                 var rating = Model.AlreadyRatedBooks[item];
-                <div class="bookCard">
+                <div class="bookCard secondBookCard">
                     <div class="cardImg">
                         <img src="@book.ImgUrl" alt="@book.Title cover" />
                     </div>
@@ -43,7 +65,7 @@
                             <h2 class="headerTitle">@book.Title</h2>
                             <p class="headerAuthor">By @book.AuthorName</p>
                         </div>
-                        <p class="bodyDescription">@book.Description</p>
+                        <p class="bodyDescription thisDescription">@book.Description</p>
 
                         <div class="bodyRatings">
                             <div class="stars">
@@ -62,7 +84,7 @@
             }
             else
             {
-                <div class="bookCard">
+                <div class="bookCard secondBookCard">
                     <div class="cardImg">
                         <img src="@book.ImgUrl" alt="@book.Title cover" />
                     </div>
@@ -71,7 +93,7 @@
                             <h2 class="headerTitle">@book.Title</h2>
                             <p class="headerAuthor">By @book.AuthorName</p>
                         </div>
-                        <p class="bodyDescription">@book.Description</p>
+                        <p class="bodyDescription thisDescription">@book.Description</p>
 
                         <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
                             <input type="hidden" name="BookId" value="@book.Id" />
@@ -93,12 +115,11 @@
                 </div>
             }
 
+
         }
 
     }
-
 </main>
-
 <style>
 
     .main {
@@ -142,8 +163,15 @@
         text-transform: uppercase;
     }
 
-    .ratingsButton disabled : hover {
-        
+    .secondBookCard {
+        margin-bottom: 1rem;
     }
+
+    .thisDescription {
+        max-width: 600px;
+        line-height: 23px;
+    }
+
+ 
 
 </style>

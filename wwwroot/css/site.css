@@ -205,11 +205,12 @@ li a {
 }
 
 .bookCard {
-    height: fit-content;
+    height: 420px;
     padding: 50px 40px;
-    box-shadow: 2px 3px 33px 0px rgba(0,0,0,0.125);
     display: flex;
+    background-color: white;
     gap: 2rem;
+    border-radius: 1rem;
 }
 
 .cardImg {
@@ -242,6 +243,7 @@ li a {
 .headerTitle {
     font-size: 1.5rem;
     font-weight: bold;
+   
 }
 
 .headerAuthor {
@@ -274,6 +276,8 @@ li a {
     border: unset;
     border-radius: 1rem;
     padding: .25rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .rated-stars {

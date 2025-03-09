@@ -21,7 +21,7 @@
                 <a class="leftTitle"
                    asp-area=""
                    asp-controller="Home"
-                   asp-action="Homepage">Book reccomendations</a>
+                   asp-action="Homepage">Book Recommender</a>
             </div>
             <div class="navRight">
                 <ul class="rightList">
@@ -29,7 +29,10 @@
                         <a class="" asp-area="" asp-controller="Home" asp-action="AISuggestions">Try AI</a>
                     </li>
                     <li>
-                        <a class="" asp-area="" asp-controller="Home" asp-action="Index">Reccomended for you</a>
+                        <a class="" asp-area="" asp-controller="Home" asp-action="Index">Recommended for you</a>
+                    </li>
+                    <li>
+                        <a class="" asp-area="" asp-controller="Recommendation" asp-action="BookByTag">Since you liked..</a>
                     </li>
                     <li>
                         <a class="" asp-area="" asp-controller="Home" asp-action="GoToReviewPage">Rate</a>
@@ -96,9 +99,9 @@
     @RenderBody()
 
     <footer class="landingPageFooter">
-        <a class="footerTitle" asp-area="" asp-controller="" asp-action="">Book reccomendations</a>
+        <a class="footerTitle" asp-area="" asp-controller="" asp-action="">Book Recommender</a>
         <p class="footerParagraph">
-            © 2025 Book reccomendations. All rights reserved. Powered by Arianna
+            © 2025 Book Recommendations. All rights reserved. Powered by Arianna
         </p>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

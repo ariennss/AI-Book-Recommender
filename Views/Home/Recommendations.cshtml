@@ -5,162 +5,192 @@
     ViewData["Title"] = "Book Recommendations";
 }
 
-<h1>Recommended Books</h1>
+<main style="padding-inline: 3.75rem;">
 
+    @if (Model.MostPopularBooks != null && Model.MostPopularBooks.Any())
 
-@if (Model.MostPopularBooks != null && Model.MostPopularBooks.Any())
+    {
+        <h2>Most Popular Books</h2>
+        <div class="scrollable-container">
+            @foreach (var book in Model.MostPopularBooks)
 
-{
-    <h2>Most Popular Books</h2>
-    <div class="scrollable-container">
-        @foreach (var book in Model.MostPopularBooks)
-
-        {
-            <div class="bookCard">
-                <div class="cardImg">
-                    <img src="@book.ImgUrl" alt="@book.Title cover" />
-                </div>
-                <div class="cardBody">
-                    <div class="bodyHeader">
-                        <h2 class="headerTitle">@book.Title</h2>
-                        <p class="headerAuthor">By @book.AuthorName</p>
+            {
+                <div class="bookCard">
+                    <div class="cardImg">
+                        <img src="@book.ImgUrl" alt="@book.Title cover" />
                     </div>
-                    <p class="bodyDescription">@book.Description</p>
-                    <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
-                        <input type="hidden" name="BookId" value="@book.Id" />
-                        <div class="stars">
-                            <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
-                            <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
-                            <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
-                            <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
-                            <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
-                            <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                    <div class="cardBody">
+                        <div class="bodyHeader">
+                            <h2 class="headerTitle">@book.Title</h2>
+                            <p class="headerAuthor">By @book.AuthorName</p>
                         </div>
-                        <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
-                    </form>
-                </div>
-            </div>
-        }
-    </div>
-}
-
-else
-
-{
-    <p>No popular books are available at the moment.</p>
-}
-
-
-@if (Model.SuggestedBooks != null && Model.SuggestedBooks.Any())
-
-{
-    <h2>Suggested for You</h2>
-    <div class="booksContainer scrollable-container">
-        @foreach (var book in Model.SuggestedBooks)
-
-        {
-            <div class="bookCard">
-                <div class="cardImg">
-                    <img src="@book.ImgUrl" alt="@book.Title cover" />
-                </div>
-                <div class="cardBody">
-                    <div class="bodyHeader">
-                        <h2 class="headerTitle">@book.Title</h2>
-                        <p class="headerAuthor">By @book.AuthorName</p>
+                        <p class="bodyDescription">@book.Description</p>
+                        <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
+                            <input type="hidden" name="BookId" value="@book.Id" />
+                            <div class="stars">
+                                <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
+                                <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
+                                <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
+                                <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
+                                <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
+                                <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                            </div>
+                            <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
+                        </form>
                     </div>
-                    <p class="bodyDescription">@book.Description</p>
-                    <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
-                        <input type="hidden" name="BookId" value="@book.Id" />
-                        <div class="stars">
-                            <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
-                            <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
-                            <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
-                            <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
-                            <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
-                            <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
-                        </div>
-                        <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
-                    </form>
                 </div>
-            </div>
+            }
+        </div>
+    }
+
+    else
+
+    {
+        <p>No popular books are available at the moment.</p>
+    }
 
 
-           
-        }
-    </div>
+    @if (Model.SuggestedBooks != null && Model.SuggestedBooks.Any())
 
+    {
+        <h2>Suggested for You</h2>
+        <div class="booksContainer scrollable-container">
+            @foreach (var book in Model.SuggestedBooks)
 
-}
-
-else
-
-{
-    <p>No suggestions are available at the moment.</p>
-}
-
-@if (Model.SimilarToRandom != null && Model.SimilarToRandom.Any())
-
-{
-    <h2>Since you liked @Model.RandomBook.Title</h2>
-    <div class="booksContainer scrollable-container">
-        @foreach (var book in Model.SimilarToRandom)
-
-        {
-            <div class="bookCard">
-                <div class="cardImg">
-                    <img src="@book.ImgUrl" alt="@book.Title cover" />
-                </div>
-                <div class="cardBody">
-                    <div class="bodyHeader">
-                        <h2 class="headerTitle">@book.Title</h2>
-                        <p class="headerAuthor">By @book.AuthorName</p>
+            {
+                <div class="bookCard">
+                    <div class="cardImg">
+                        <img src="@book.ImgUrl" alt="@book.Title cover" />
                     </div>
-                    <p class="bodyDescription">@book.Description</p>
-                    <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
-                        <input type="hidden" name="BookId" value="@book.Id" />
-                        <div class="stars">
-                            <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
-                            <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
-                            <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
-                            <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
-                            <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
-                            <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
-                            <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                    <div class="cardBody">
+                        <div class="bodyHeader">
+                            <h2 class="headerTitle">@book.Title</h2>
+                            <p class="headerAuthor">By @book.AuthorName</p>
                         </div>
-                        <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
-                    </form>
+                        <p class="bodyDescription">@book.Description</p>
+                        <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
+                            <input type="hidden" name="BookId" value="@book.Id" />
+                            <div class="stars">
+                                <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
+                                <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
+                                <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
+                                <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
+                                <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
+                                <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                            </div>
+                            <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
 
-        }
+
+            }
+        </div>
+
+
+    }
+
+    else
+
+    {
+        <p>No suggestions are available at the moment.</p>
+    }
+
+    @if (Model.SimilarToRandom != null && Model.SimilarToRandom.Any())
+
+    {
+        <h2>Since you liked @Model.RandomBook.Title</h2>
+        <div class="booksContainer scrollable-container">
+            @foreach (var book in Model.SimilarToRandom)
+
+            {
+                <div class="bookCard">
+                    <div class="cardImg">
+                        <img src="@book.ImgUrl" alt="@book.Title cover" />
+                    </div>
+                    <div class="cardBody">
+                        <div class="bodyHeader">
+                            <h2 class="headerTitle">@book.Title</h2>
+                            <p class="headerAuthor">By @book.AuthorName</p>
+                        </div>
+                        <p class="bodyDescription">@book.Description</p>
+                        <form action="@Url.Action("AddRating", "Ratings")" method="post" class="bodyRatings">
+                            <input type="hidden" name="BookId" value="@book.Id" />
+                            <div class="stars">
+                                <input type="radio" id="star5-suggested-@book.Id" name="rating" value="5" onclick="enableSubmit(@book.Id)" />
+                                <label for="star5-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star4-suggested-@book.Id" name="rating" value="4" onclick="enableSubmit(@book.Id)" />
+                                <label for="star4-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star3-suggested-@book.Id" name="rating" value="3" onclick="enableSubmit(@book.Id)" />
+                                <label for="star3-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star2-suggested-@book.Id" name="rating" value="2" onclick="enableSubmit(@book.Id)" />
+                                <label for="star2-suggested-@book.Id" class="star">&#9733;</label>
+                                <input type="radio" id="star1-suggested-@book.Id" name="rating" value="1" onclick="enableSubmit(@book.Id)" />
+                                <label for="star1-suggested-@book.Id" class="star">&#9733;</label>
+                            </div>
+                            <button type="submit" class="ratingsButton disabled" id="submit-btn-@book.Id">Rate</button>
+                        </form>
+                    </div>
+                </div>
+
+
+            }
+        </div>
+
+
+    }
+
+    else
+
+    {
+        <p>No suggestions are available at the moment.</p>
+    }
+
+    <div class="divNeedMore">
+        <p class="needMoreP">Need more ideas?</p>
+        <div class="twoButtons">
+            <a href="@Url.Action("GoToReviewPage", "Home")" class="btnRate">Rate more books!</a>
+            <a href="@Url.Action("AISuggestions", "Home")" class="btnTryAI">Try AI suggestions!</a>
+        </div>
     </div>
+</main>
 
+<style>
+    .divNeedMore {
+        display: grid;
+        row-gap: .5rem;
+        place-content: center;
+        text-align: center;
+    }
 
-}
+    .needMoreP {
+        font-size: 2rem;
+    }
 
-else
+    .twoButtons {
+        display: flex;
+        gap: 1rem;
+    }
 
-{
-    <p>No suggestions are available at the moment.</p>
-}
-
-<div class="mt-4">
-    <p>Need more ideas?</p>
-    <a href="@Url.Action("GoToReviewPage", "Home")" class="btn btn-primary d-block mb-2">Rate more books!</a>
-    <a href="@Url.Action("AISuggestions", "Home")" class="btn btn-secondary d-block">Try AI suggestions!</a>
-</div>
+    .btnRate, .btnTryAI {
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+        background-color: var(--primary-color);
+        border-radius: 1rem;
+        padding: 0.5rem 2rem;
+        font-size: 1.5rem;
+    }
+</style>
 
 <script>
     function enableSubmit(bookId) {
